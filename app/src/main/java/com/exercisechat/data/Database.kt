@@ -6,7 +6,7 @@ import androidx.room.TypeConverters
 
 @TypeConverters(MessageConverters::class)
 @Database(entities = [User::class, Message::class], version = 1)
-abstract class AppDatabase : RoomDatabase() {
+abstract class ChatDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
     abstract fun messageDao(): MessageDao
 }
