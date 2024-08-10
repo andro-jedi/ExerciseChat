@@ -2,8 +2,7 @@ package com.exercisechat.di
 
 import androidx.room.Room
 import com.exercisechat.ChatApplication
-import com.exercisechat.data.ChatDatabase
-import com.exercisechat.data.UserDao
+import com.exercisechat.data.source.local.ChatDatabase
 import org.koin.dsl.module
 
 fun provideDataBase(application: ChatApplication): ChatDatabase =
