@@ -9,5 +9,9 @@ data class User(
     @PrimaryKey val id: Int,
     val firstName: String,
     val lastName: String,
-    @IntRange(1-10) val avatarId: Int = 1
-)
+    @IntRange(1 - 10) val avatarId: Int = 1
+) {
+
+    val fullName: String
+        get() = "$firstName $lastName"
+}

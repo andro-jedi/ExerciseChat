@@ -2,7 +2,6 @@ package com.exercisechat.data
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import androidx.room.TypeConverter
 import java.time.Instant
 
 @Entity
@@ -20,25 +19,3 @@ enum class MessageStatus {
     READ
 }
 
-class MessageConverters {
-
-    @TypeConverter
-    fun fromMessageStatus(status: MessageStatus): String {
-        return status.name
-    }
-
-    @TypeConverter
-    fun toMessageStatus(status: String): MessageStatus {
-        return MessageStatus.valueOf(status)
-    }
-
-    @TypeConverter
-    fun fromMessageInstant(time: Instant): Long {
-        return time.epochSecond
-    }
-
-    @TypeConverter
-    fun toMessageInstant(seconds: Long): Instant {
-        return Instant.ofEpochSecond(seconds)
-    }
-}
