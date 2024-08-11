@@ -7,7 +7,8 @@ import java.time.Instant
 @Entity(tableName = "message")
 data class Message(
     val text: String,
-    val userId: Int,
+    val senderUserId: Int,
+    val receiverUserId: Int,
     val status: MessageStatus,
     val timestamp: Instant
 ) {
@@ -18,7 +19,6 @@ data class Message(
 
 enum class MessageStatus {
     SENT,
-    DELIVERED,
-    READ
+    DELIVERED
 }
 

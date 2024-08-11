@@ -4,16 +4,20 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.*
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.exercisechat.data.User
+import com.exercisechat.ui.messages.MessageViewModel
 import com.exercisechat.ui.messages.MessagesScreen
 import com.exercisechat.ui.theme.ExerciseChatTheme
 import com.exercisechat.ui.users.UsersScreen
 import com.exercisechat.ui.users.UsersViewModel
 import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 class MainActivity : ComponentActivity() {
 
@@ -30,14 +34,20 @@ class MainActivity : ComponentActivity() {
     @Composable
     private fun MainContent() {
         val navController = rememberNavController()
+        // fake current user session
+        val currentUser by remember {
+            mutableStateOf(User("Santa", "Bremor").apply { id = 99 })
+        }
         NavHost(navController = navController, startDestination = Routes.USERS) {
             composable(route = Routes.USERS) {
                 val viewModel: UsersViewModel = koinViewModel()
                 val uiState = viewModel.uiState.collectAsState()
                 UsersScreen(
                     users = uiState.value.users,
-                    onUserClicked = {
-                        navController.navigate(Routes.CHAT)
+                    onUserClicked = { receiverUser ->
+                        navController.navigate(
+                            route = "chatScreen/${receiverUser.id}"
+                        )
                     },
                     addNewUserClicked = {
                         viewModel.generateNewUser()
@@ -45,14 +55,30 @@ class MainActivity : ComponentActivity() {
                 )
             }
 
-            composable(route = Routes.CHAT) {
-                MessagesScreen(navController)
+            composable(
+                route = Routes.CHAT,
+                arguments = listOf(navArgument("receiverUserId") { type = NavType.IntType })
+            ) { backStackEntry ->
+                val receiverUserId = backStackEntry.arguments?.getInt("receiverUserId")
+                val viewModel: MessageViewModel = koinViewModel { parametersOf(currentUser.id, receiverUserId) }
+                val uiState = viewModel.uiState.collectAsState()
+
+                MessagesScreen(
+                    navController = navController,
+                    senderUser = currentUser,
+                    receiverUser = currentUser, // TODO
+                    messages = uiState.value.messages,
+                    onSendMessage = { message ->
+                        viewModel.sendMessage(message)
+                    }
+                )
             }
         }
     }
 }
 
 object Routes {
+
     const val USERS = "usersScreen"
-    const val CHAT = "chatScreen"
+    const val CHAT = "chatScreen/{receiverUserId}"
 }
