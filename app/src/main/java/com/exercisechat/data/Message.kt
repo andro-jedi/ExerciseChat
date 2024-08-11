@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.time.Instant
 
-@Entity
+@Entity(tableName = "message")
 data class Message(
     @PrimaryKey val id: Long,
     val text: String,
