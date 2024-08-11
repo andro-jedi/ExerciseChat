@@ -62,7 +62,7 @@ fun UsersScreen(
 }
 
 @Composable
-fun UserItem(user: User, onUserClicked: (user: User) -> Unit, modifier: Modifier = Modifier) {
+private fun UserItem(user: User, onUserClicked: (user: User) -> Unit, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier
             .height(80.dp)
