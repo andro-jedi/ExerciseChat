@@ -6,11 +6,13 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class User(
-    @PrimaryKey val id: Int,
     val firstName: String,
     val lastName: String,
     @IntRange(1 - 10) val avatarId: Int = 1
 ) {
+
+    @PrimaryKey(autoGenerate = true)
+    var id: Int = 0
 
     val fullName: String
         get() = "$firstName $lastName"

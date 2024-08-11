@@ -11,7 +11,7 @@ class UserRepositoryImpl(
         return userDao.getAll()
     }
 
-    override suspend fun add(user: User) {
-        userDao.insert(user)
+    override suspend fun add(vararg users: User) {
+        userDao.insert(*users)
     }
 }

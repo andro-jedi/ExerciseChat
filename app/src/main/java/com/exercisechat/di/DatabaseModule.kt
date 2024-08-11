@@ -1,11 +1,11 @@
 package com.exercisechat.di
 
+import android.app.Application
 import androidx.room.Room
-import com.exercisechat.ChatApplication
 import com.exercisechat.data.source.local.ChatDatabase
 import org.koin.dsl.module
 
-fun provideDataBase(application: ChatApplication): ChatDatabase =
+fun provideDataBase(application: Application): ChatDatabase =
     Room.databaseBuilder(
         application,
         ChatDatabase::class.java,
