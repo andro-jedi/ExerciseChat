@@ -6,12 +6,15 @@ import java.time.Instant
 
 @Entity(tableName = "message")
 data class Message(
-    @PrimaryKey val id: Long,
     val text: String,
     val userId: Int,
     val status: MessageStatus,
     val timestamp: Instant
-)
+) {
+
+    @PrimaryKey(autoGenerate = true)
+    var id: Long = 0
+}
 
 enum class MessageStatus {
     SENT,

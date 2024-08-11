@@ -66,21 +66,19 @@ fun UserItem(user: User, onUserClicked: (user: User) -> Unit, modifier: Modifier
     Row(
         modifier = modifier
             .height(80.dp)
-            .padding(16.dp)
-            .clickable { onUserClicked(user) },
+            .clickable { onUserClicked(user) }
+            .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
             modifier = Modifier
                 .fillMaxSize()
                 .weight(1f),
-            text = "${user.firstName} ${user.lastName}",
+            text = user.fullName,
             fontSize = 32.sp,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
-
-        Text(text = "+156")
     }
 }
 
