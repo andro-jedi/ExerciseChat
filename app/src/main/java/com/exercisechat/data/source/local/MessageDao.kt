@@ -6,12 +6,15 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MessageDao {
-    @Query("""
+
+    @Query(
+        """
         SELECT * FROM message 
         WHERE (senderUserId == :senderUserId AND receiverUserId == :receiverUserId) 
         OR (senderUserId == :receiverUserId AND receiverUserId == :senderUserId) 
         ORDER BY id DESC
-        """)
+        """
+    )
     fun getAllSorted(senderUserId: Long, receiverUserId: Long): Flow<List<Message>>
 
     @Insert
@@ -21,6 +24,11 @@ interface MessageDao {
     suspend fun delete(message: Message)
 
     @Transaction
-    @Query("DELETE FROM message WHERE senderUserId = :senderId AND receiverUserId = :receiverId")
+    @Query(
+        """
+        DELETE FROM message WHERE (senderUserId == :senderId AND receiverUserId == :receiverId) 
+        OR (senderUserId == :receiverId AND receiverUserId == :senderId)
+        """
+    )
     suspend fun deleteAllMessagesBetween(senderId: Long, receiverId: Long)
 }
