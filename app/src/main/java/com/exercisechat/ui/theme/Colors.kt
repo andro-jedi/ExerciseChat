@@ -13,6 +13,7 @@ object Colors {
     val Pink40 = Color(0xFF7D5260)
 
     val LightGrey = Color(0xfff0f5fa)
+    val DarkGrey = Color(0xffaab4b9)
     val BubblePink = Color(0xffff0f78)
 
     val StatusSent = Color(0xffc8cdd2)

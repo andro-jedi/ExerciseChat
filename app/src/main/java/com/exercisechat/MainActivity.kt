@@ -66,10 +66,13 @@ class MainActivity : ComponentActivity() {
                 MessagesScreen(
                     navController = navController,
                     senderUser = currentUser,
-                    receiverUser = currentUser, // TODO
+                    receiverUser = uiState.value.receiverUser, // TODO
                     messages = uiState.value.messages,
                     onSendMessage = { message ->
                         viewModel.sendMessage(message)
+                    },
+                    onChatCleared = {
+                        viewModel.clearChat()
                     }
                 )
             }

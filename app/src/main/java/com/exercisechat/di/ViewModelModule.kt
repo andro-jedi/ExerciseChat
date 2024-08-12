@@ -8,5 +8,5 @@ import org.koin.dsl.module
 
 val viewModelModule = module {
     viewModelOf(::UsersViewModel)
-    viewModel { parameters -> MessageViewModel(currentUserId = parameters.get(), receiverUserId = parameters.get(), get()) }
+    viewModel { parameters -> MessageViewModel(currentUserId = parameters.get(), receiverUserId = parameters.get(), get(), get()) }
 }

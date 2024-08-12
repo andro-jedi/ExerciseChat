@@ -2,43 +2,57 @@ package com.exercisechat.ui.messages
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.exercisechat.data.Message
-import com.exercisechat.data.MessageRepository
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import com.exercisechat.data.*
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import java.time.Instant
 
 data class MessageUiState(
-    val receiverUserId: Int,
-    val messages: List<Message>
+    val messages: List<Message>,
+    val receiverUser: User? = null
 )
 
 class MessageViewModel(
     private val currentUserId: Int,
     private val receiverUserId: Int,
     private val messageRepository: MessageRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(MessageUiState(receiverUserId, emptyList()))
+    private val _uiState = MutableStateFlow(MessageUiState(emptyList()))
     val uiState: StateFlow<MessageUiState> = _uiState.asStateFlow()
 
     init {
         viewModelScope.launch {
-//            messageRepository.observeAll().collect { users ->
-//                _uiState.update { it.copy(users = users) }
-//            }
+            userRepository.get(receiverUserId)?.let { user ->
+                _uiState.update { it.copy(receiverUser = user) }
+            }
+        }
+
+        viewModelScope.launch {
+            messageRepository.observeChat(currentUserId, receiverUserId).collect { messages ->
+                _uiState.update { it.copy(messages = messages) }
+            }
         }
     }
 
     fun sendMessage(message: String) {
         viewModelScope.launch {
-//            messageRepository.add(
-//                Message(
-//                    text = message,
-//
-//                )
-//            )
+            messageRepository.add(
+                Message(
+                    text = message,
+                    currentUserId,
+                    receiverUserId,
+                    MessageStatus.SENT,
+                    Instant.now()
+                )
+            )
+        }
+    }
+
+    fun clearChat() {
+        viewModelScope.launch {
+            messageRepository.clearChat(currentUserId, receiverUserId)
         }
     }
 }

@@ -4,7 +4,7 @@ import androidx.annotation.IntRange
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.*
 import androidx.compose.material3.*
@@ -16,11 +16,12 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -31,37 +32,48 @@ import com.exercisechat.data.MessageStatus
 import com.exercisechat.data.User
 import com.exercisechat.ui.theme.Colors
 import com.exercisechat.ui.theme.ExerciseChatTheme
+import java.time.Duration
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+
+private const val SMALL_MESSAGE_SPACING = 4
+private const val LARGE_MESSAGE_SPACING = 12
+private val applyLargeSpacingAfter = Duration.ofSeconds(20)
+
+private val timestampFormatter = DateTimeFormatter.ofPattern("EEEE HH:mm").withZone(ZoneId.systemDefault())
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MessagesScreen(
     navController: NavHostController,
     senderUser: User,
-    receiverUser: User,
+    receiverUser: User?,
     messages: List<Message>,
-    onSendMessage: (message: String) -> Unit
+    onSendMessage: (message: String) -> Unit,
+    onChatCleared: () -> Unit
 ) {
     Scaffold(
         topBar = {
+            var showMenu by remember { mutableStateOf(false) }
             TopAppBar(
                 modifier = Modifier
                     .shadow(4.dp)
                     .background(MaterialTheme.colorScheme.primary),
                 title = {
-                    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                        Image(
-                            modifier = Modifier.size(48.dp),
-                            painter = painterResource(id = getUserAvatar(receiverUser.avatarId)),
-                            contentDescription = "avatar"
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = receiverUser.firstName,
-                            fontSize = 18.sp
-                        )
+                    Row(modifier = Modifier.wrapContentWidth(), verticalAlignment = Alignment.CenterVertically) {
+                        if (receiverUser != null) {
+                            Image(
+                                modifier = Modifier.size(48.dp),
+                                painter = painterResource(id = getUserAvatar(receiverUser.avatarId)),
+                                contentDescription = "avatar"
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = receiverUser.firstName,
+                                fontSize = 18.sp
+                            )
+                        }
                     }
                 },
                 navigationIcon = {
@@ -75,10 +87,21 @@ fun MessagesScreen(
                     })
                 },
                 actions = {
-                    Image(
-                        painter = painterResource(id = R.drawable.baseline_more_horiz_24),
-                        contentDescription = "avatar"
-                    )
+                    IconButton(onClick = { showMenu = !showMenu }) {
+                        Icon(painter = painterResource(id = R.drawable.baseline_more_horiz_24), contentDescription = "More")
+                    }
+                    DropdownMenu(
+                        expanded = showMenu,
+                        onDismissRequest = { showMenu = false }
+                    ) {
+                        DropdownMenuItem(
+                            text = { Text("Clear history") },
+                            onClick = {
+                                onChatCleared()
+                                showMenu = false
+                            }
+                        )
+                    }
                 }
             )
         }
@@ -86,13 +109,28 @@ fun MessagesScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
+                .padding(innerPadding),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            MessagesColumn(
-                modifier = Modifier.padding(12.dp),
-                messages = messages,
-                senderUser = senderUser,
-            )
+            if (messages.isEmpty()) {
+                Text(
+                    modifier = Modifier
+                        .wrapContentSize()
+                        .weight(1f),
+                    color = Colors.DarkGrey,
+                    text = stringResource(id = R.string.text_empty_chat),
+                    fontSize = 24.sp
+                )
+            } else {
+                MessagesColumn(
+                    modifier = Modifier
+                        .padding(12.dp)
+                        .fillMaxSize()
+                        .weight(1f),
+                    messages = messages,
+                    senderUser = senderUser,
+                )
+            }
             Spacer(
                 modifier = Modifier
                     .height(4.dp)
@@ -157,6 +195,7 @@ fun MessageInputField(
             keyboardActions = KeyboardActions(
                 onSend = { sendMessage() }
             ),
+            maxLines = 5,
             textStyle = MaterialTheme.typography.bodyLarge.copy(fontSize = 16.sp)
         )
 
@@ -183,46 +222,81 @@ fun MessageInputField(
 }
 
 @Composable
-private fun ColumnScope.MessagesColumn(
+private fun MessagesColumn(
     modifier: Modifier = Modifier,
     messages: List<Message>,
     senderUser: User
 ) {
-    var previousTimestamp: Instant? by remember { mutableStateOf(null) }
+    /**
+     * Returns the spacing between the current message and the previous message.
+     *
+     * @param previousMessage the previous message, or null if this is the first message
+     * @return large or small spacing
+     */
+    fun getMessageSpacing(previousMessage: Message?, currentMessage: Message): Dp {
+        if (previousMessage == null) return SMALL_MESSAGE_SPACING.dp
+
+        return if (previousMessage.senderUserId == currentMessage.senderUserId
+            && Duration.between(
+                previousMessage.timestamp,
+                currentMessage.timestamp
+            ).seconds < applyLargeSpacingAfter.seconds
+        ) {
+            SMALL_MESSAGE_SPACING.dp
+        } else {
+            LARGE_MESSAGE_SPACING.dp
+        }
+    }
+
     LazyColumn(
-        modifier = modifier
-            .fillMaxSize()
-            .weight(1f),
+        modifier = modifier,
         reverseLayout = true
     ) {
-        items(messages) { message ->
-            val messageTime = message.timestamp
-            val formatter = DateTimeFormatter.ofPattern("EEE HH:mm").withZone(ZoneId.systemDefault())
-            val currentDateTime = formatter.format(messageTime)
-            val previousDateTime = previousTimestamp?.let { formatter.format(it) }
+        itemsIndexed(messages) { index, message ->
+            // access the previous item if it exists
+            // since array is sorted by descending we are using next index, not previous
+            val previousMessage = messages.getOrNull(index + 1)
 
-            if (previousTimestamp == null || previousDateTime != currentDateTime) {
-                Text(
-                    text = currentDateTime,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp),
-                    style = MaterialTheme.typography.bodySmall.copy(
-                        fontWeight = FontWeight.Light,
-                        color = Color.Gray
-                    ),
-                    textAlign = TextAlign.Center
-                )
-            }
-
-            previousTimestamp = messageTime
-
+            val messageSpacing = getMessageSpacing(previousMessage, message)
             MessageBubble(
+                modifier = Modifier.padding(top = messageSpacing, start = 48.dp),
                 text = message.text,
                 status = MessageStatus.SENT,
                 isCurrentUser = message.senderUserId == senderUser.id
             )
+
+            // display timestamp if a previous message was sent more than an hour ago, or there is no previous messages
+            if (previousMessage == null) {
+                MessageTimestamp(message.timestamp)
+            } else {
+                val messageAge = Duration.between(previousMessage.timestamp, message.timestamp)
+                if (messageAge.toHours() > 1) {
+                    MessageTimestamp(message.timestamp)
+                }
+            }
         }
+    }
+}
+
+@Composable
+private fun MessageTimestamp(timestamp: Instant) {
+    val (day, time) = timestampFormatter.format(timestamp).split(" ")
+
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+        Text(
+            modifier = Modifier
+                .wrapContentWidth(),
+            text = day,
+            color = Colors.DarkGrey,
+            fontWeight = FontWeight.Bold
+        )
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(
+            modifier = Modifier
+                .wrapContentWidth(),
+            text = time,
+            color = Colors.DarkGrey
+        )
     }
 }
 
@@ -230,25 +304,25 @@ private fun ColumnScope.MessagesColumn(
 private fun MessageBubble(
     text: String,
     status: MessageStatus,
-    isCurrentUser: Boolean
+    isCurrentUser: Boolean,
+    modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth(),
-        horizontalArrangement = if (isCurrentUser) Arrangement.Start else Arrangement.End
+        horizontalArrangement = if (isCurrentUser) Arrangement.End else Arrangement.Start
     ) {
         Box(
             modifier = Modifier
                 .background(
-                    color = if (isCurrentUser) Colors.LightGrey else Colors.BubblePink,
+                    color = if (isCurrentUser) Colors.BubblePink else Colors.LightGrey,
                     shape = RoundedCornerShape(
                         topStart = 16.dp,
                         topEnd = 16.dp,
-                        bottomEnd = if (isCurrentUser) 16.dp else 0.dp,
-                        bottomStart = if (isCurrentUser) 0.dp else 16.dp
+                        bottomEnd = if (isCurrentUser) 0.dp else 16.dp,
+                        bottomStart = if (isCurrentUser) 16.dp else 0.dp
                     )
                 )
-                .widthIn(max = 250.dp)
         ) {
             BasicText(
                 modifier = Modifier
@@ -256,11 +330,11 @@ private fun MessageBubble(
                     .padding(16.dp),
                 text = text,
                 style = MaterialTheme.typography.bodyLarge.copy(
-                    color = if (isCurrentUser) Color.DarkGray else Color.White,
+                    color = if (isCurrentUser) Color.White else Color.DarkGray,
                     fontSize = 16.sp
                 )
             )
-            if (!isCurrentUser) {
+            if (isCurrentUser) {
                 val statusColor = when (status) {
                     MessageStatus.SENT -> Colors.StatusSent
                     MessageStatus.DELIVERED -> Colors.StatusDelivered
@@ -308,13 +382,37 @@ private fun MessagesScreenPreview() {
             messages = listOf(
                 Message(
                     text = "Hello World!",
-                    senderUserId = 1,
-                    receiverUserId = 2,
+                    senderUserId = 2,
+                    receiverUserId = 1,
                     status = MessageStatus.SENT,
                     Instant.ofEpochSecond(123456789)
                 )
             ),
-            onSendMessage = {}
+            onSendMessage = {},
+            onChatCleared = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun MessagesEmptyChatPreview() {
+    ExerciseChatTheme {
+        MessagesScreen(
+            navController = rememberNavController(),
+            receiverUser = User(
+                firstName = "First",
+                lastName = "Last",
+                avatarId = 2
+            ).apply { id = 1 },
+            senderUser = User(
+                firstName = "Second",
+                lastName = "Last",
+                avatarId = 3
+            ).apply { id = 2 },
+            messages = emptyList(),
+            onSendMessage = {},
+            onChatCleared = {}
         )
     }
 }
@@ -337,5 +435,13 @@ private fun MessagesInputPreview() {
         MessageInputField {
 
         }
+    }
+}
+
+@Preview
+@Composable
+private fun MessagesTimestampPreview() {
+    ExerciseChatTheme {
+        MessageTimestamp(timestamp = Instant.now())
     }
 }

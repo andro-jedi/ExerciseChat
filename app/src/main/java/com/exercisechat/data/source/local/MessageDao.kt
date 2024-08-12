@@ -14,4 +14,8 @@ interface MessageDao {
 
     @Delete
     suspend fun delete(message: Message)
+
+    @Transaction
+    @Query("DELETE FROM message WHERE senderUserId = :senderId AND receiverUserId = :receiverId")
+    suspend fun deleteAllMessagesBetween(senderId: Int, receiverId: Int)
 }
