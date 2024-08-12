@@ -25,9 +25,10 @@ class UsersViewModel(
 
     init {
         viewModelScope.launch {
-            userRepository.observeAll().collect { users ->
-                val currentUser = sessionManager.getCurrentUser()
-                _uiState.update { it.copy(users = users.map { it.toUserEntity() }, currentUserId = currentUser?.id ?: 0) }
+            userRepository.observeAll().combine(sessionManager.observeCurrentUserId()) { users, currentUserId ->
+                users to currentUserId
+            }.collect { (users, currentUserId) ->
+                _uiState.update { it.copy(users = users.map { it.toUserEntity() }, currentUserId = currentUserId) }
             }
         }
     }
