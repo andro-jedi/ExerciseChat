@@ -22,3 +22,4 @@ dependencyResolutionManagement {
 rootProject.name = "ExerciseChat"
 include(":app")
 include(":domain")
+include(":data")
