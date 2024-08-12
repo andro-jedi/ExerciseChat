@@ -1,11 +1,11 @@
-package com.exercisechat.ui.users
+package com.exercisechat.presentation.users
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.exercisechat.data.User
+import com.exercisechat.SessionManagerImpl
 import com.exercisechat.data.UserMock
-import com.exercisechat.data.UserRepository
-import com.exercisechat.domain.SessionManagerImpl
+import com.exercisechat.domain.UserRepository
+import com.exercisechat.domain.models.User
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 

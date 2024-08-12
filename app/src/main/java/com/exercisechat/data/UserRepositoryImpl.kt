@@ -1,6 +1,8 @@
 package com.exercisechat.data
 
 import com.exercisechat.data.source.local.UserDao
+import com.exercisechat.domain.UserRepository
+import com.exercisechat.domain.models.User
 import kotlinx.coroutines.flow.Flow
 
 class UserRepositoryImpl(

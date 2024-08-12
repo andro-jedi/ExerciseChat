@@ -1,8 +1,9 @@
-package com.exercisechat.domain
+package com.exercisechat
 
 import android.content.Context
-import com.exercisechat.data.User
-import com.exercisechat.data.UserRepository
+import com.exercisechat.domain.SessionManager
+import com.exercisechat.domain.UserRepository
+import com.exercisechat.domain.models.User
 
 private const val CURRENT_USER_KEY = "current_user_id"
 

@@ -1,9 +1,13 @@
-package com.exercisechat.ui.messages
+package com.exercisechat.presentation.messages
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.exercisechat.data.*
+import com.exercisechat.domain.MessageRepository
 import com.exercisechat.domain.SessionManager
+import com.exercisechat.domain.UserRepository
+import com.exercisechat.domain.models.Message
+import com.exercisechat.domain.models.MessageStatus
+import com.exercisechat.domain.models.User
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.time.Instant

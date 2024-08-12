@@ -1,5 +1,6 @@
-package com.exercisechat.data
+package com.exercisechat.domain
 
+import com.exercisechat.domain.models.Message
 import kotlinx.coroutines.flow.Flow
 
 interface MessageRepository {

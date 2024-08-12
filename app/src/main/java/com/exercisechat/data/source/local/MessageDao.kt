@@ -1,7 +1,7 @@
 package com.exercisechat.data.source.local
 
 import androidx.room.*
-import com.exercisechat.data.Message
+import com.exercisechat.domain.models.Message
 import kotlinx.coroutines.flow.Flow
 
 @Dao

@@ -1,4 +1,4 @@
-package com.exercisechat.data
+package com.exercisechat.domain.models
 
 import androidx.annotation.IntRange
 import androidx.room.Entity

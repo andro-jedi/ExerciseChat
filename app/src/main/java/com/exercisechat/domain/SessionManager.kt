@@ -1,6 +1,6 @@
 package com.exercisechat.domain
 
-import com.exercisechat.data.User
+import com.exercisechat.domain.models.User
 
 /**
  * Session manager interface to hold active user session

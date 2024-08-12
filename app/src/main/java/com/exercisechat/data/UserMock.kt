@@ -1,5 +1,7 @@
 package com.exercisechat.data
 
+import com.exercisechat.domain.models.User
+
 object UserMock {
 
     private val firstNames = listOf("Adam", "John", "Alex", "Kiril", "Sasha", "Dom")

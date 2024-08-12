@@ -1,4 +1,4 @@
-package com.exercisechat.ui.messages
+package com.exercisechat.presentation.messages
 
 import androidx.annotation.IntRange
 import androidx.compose.foundation.*
@@ -27,9 +27,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.exercisechat.R
-import com.exercisechat.data.Message
-import com.exercisechat.data.MessageStatus
-import com.exercisechat.data.User
+import com.exercisechat.domain.models.Message
+import com.exercisechat.domain.models.MessageStatus
+import com.exercisechat.domain.models.User
 import com.exercisechat.ui.theme.Colors
 import com.exercisechat.ui.theme.ExerciseChatTheme
 import java.time.Duration

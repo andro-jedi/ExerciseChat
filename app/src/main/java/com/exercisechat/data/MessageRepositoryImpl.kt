@@ -1,6 +1,8 @@
 package com.exercisechat.data
 
 import com.exercisechat.data.source.local.MessageDao
+import com.exercisechat.domain.MessageRepository
+import com.exercisechat.domain.models.Message
 import kotlinx.coroutines.flow.Flow
 
 class MessageRepositoryImpl(

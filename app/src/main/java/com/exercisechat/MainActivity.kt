@@ -12,11 +12,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.exercisechat.ui.messages.MessageViewModel
-import com.exercisechat.ui.messages.MessagesScreen
+import com.exercisechat.presentation.messages.MessageViewModel
+import com.exercisechat.presentation.messages.MessagesScreen
+import com.exercisechat.presentation.users.UsersScreen
+import com.exercisechat.presentation.users.UsersViewModel
 import com.exercisechat.ui.theme.ExerciseChatTheme
-import com.exercisechat.ui.users.UsersScreen
-import com.exercisechat.ui.users.UsersViewModel
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 

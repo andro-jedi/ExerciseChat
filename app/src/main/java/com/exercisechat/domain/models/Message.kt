@@ -1,4 +1,4 @@
-package com.exercisechat.data
+package com.exercisechat.domain.models
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

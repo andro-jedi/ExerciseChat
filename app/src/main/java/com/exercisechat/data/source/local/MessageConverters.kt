@@ -1,7 +1,7 @@
 package com.exercisechat.data.source.local
 
 import androidx.room.TypeConverter
-import com.exercisechat.data.MessageStatus
+import com.exercisechat.domain.models.MessageStatus
 import java.time.Instant
 
 class MessageConverters {
