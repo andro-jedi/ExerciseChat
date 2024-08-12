@@ -1,6 +1,7 @@
 package com.exercisechat.di
 
 import com.exercisechat.SessionManagerImpl
+import com.exercisechat.data.di.databaseModule
 import com.exercisechat.domain.SessionManager
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind

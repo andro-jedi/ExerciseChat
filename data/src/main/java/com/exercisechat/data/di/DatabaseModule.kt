@@ -1,4 +1,4 @@
-package com.exercisechat.di
+package com.exercisechat.data.di
 
 import android.app.Application
 import androidx.room.Room
