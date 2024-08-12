@@ -10,11 +10,10 @@ class MessageRepositoryImpl(
 ) : MessageRepository {
 
     override suspend fun observeChat(senderUserId: Int, receiverUserId: Int): Flow<List<Message>> {
-        return messageDao.getAll(senderUserId, receiverUserId)
+        return messageDao.getAllSorted(senderUserId, receiverUserId)
     }
 
     override suspend fun add(message: Message) {
         messageDao.insert(message)
     }
-
 }
