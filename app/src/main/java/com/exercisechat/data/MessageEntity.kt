@@ -1,11 +1,12 @@
-package com.exercisechat.domain.models
+package com.exercisechat.data
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.exercisechat.domain.models.MessageStatus
 import java.time.Instant
 
 @Entity(tableName = "message")
-data class Message(
+data class MessageEntity(
     val text: String,
     val senderUserId: Long,
     val receiverUserId: Long,
@@ -15,10 +16,5 @@ data class Message(
 
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0
-}
-
-enum class MessageStatus {
-    SENT,
-    DELIVERED
 }
 

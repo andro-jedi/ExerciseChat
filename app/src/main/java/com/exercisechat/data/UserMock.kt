@@ -8,6 +8,7 @@ object UserMock {
     private val lastNames = listOf("Bobkin", "Smith", "Truth", "Green", "Jackson", "Dom")
 
     fun newUser() = User(
+        id = 0,
         firstName = firstNames.random(),
         lastName = lastNames.random(),
         avatarId = (1..3).random()

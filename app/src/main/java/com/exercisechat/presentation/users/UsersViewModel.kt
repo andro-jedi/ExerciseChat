@@ -3,14 +3,15 @@ package com.exercisechat.presentation.users
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.exercisechat.SessionManagerImpl
+import com.exercisechat.data.UserEntity
 import com.exercisechat.data.UserMock
+import com.exercisechat.data.toUserEntity
 import com.exercisechat.domain.UserRepository
-import com.exercisechat.domain.models.User
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 data class UsersUiState(
-    val users: List<User>,
+    val users: List<UserEntity>,
     val currentUserId: Long = 0
 )
 
@@ -26,7 +27,7 @@ class UsersViewModel(
         viewModelScope.launch {
             userRepository.observeAll().collect { users ->
                 val currentUser = sessionManager.getCurrentUser()
-                _uiState.update { it.copy(users = users, currentUserId = currentUser?.id ?: 0) }
+                _uiState.update { it.copy(users = users.map { it.toUserEntity() }, currentUserId = currentUser?.id ?: 0) }
             }
         }
     }

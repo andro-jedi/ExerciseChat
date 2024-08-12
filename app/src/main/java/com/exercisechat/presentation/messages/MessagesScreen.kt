@@ -27,9 +27,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.exercisechat.R
+import com.exercisechat.data.UserEntity
 import com.exercisechat.domain.models.Message
 import com.exercisechat.domain.models.MessageStatus
-import com.exercisechat.domain.models.User
 import com.exercisechat.ui.theme.Colors
 import com.exercisechat.ui.theme.ExerciseChatTheme
 import java.time.Duration
@@ -47,8 +47,8 @@ private val timestampFormatter = DateTimeFormatter.ofPattern("EEEE HH:mm").withZ
 @Composable
 fun MessagesScreen(
     navController: NavHostController,
-    senderUser: User?,
-    receiverUser: User?,
+    senderUser: UserEntity?,
+    receiverUser: UserEntity?,
     messages: List<Message>,
     onSendMessage: (message: String) -> Unit,
     onChatCleared: () -> Unit
@@ -247,7 +247,7 @@ fun MessageInputField(
 private fun MessagesColumn(
     modifier: Modifier = Modifier,
     messages: List<Message>,
-    senderUser: User
+    senderUser: UserEntity
 ) {
     /**
      * Returns the spacing between the current message and the previous message.
@@ -402,12 +402,12 @@ private fun MessagesScreenPreview() {
     ExerciseChatTheme {
         MessagesScreen(
             navController = rememberNavController(),
-            receiverUser = User(
+            receiverUser = UserEntity(
                 firstName = "First",
                 lastName = "Last",
                 avatarId = 2
             ).apply { id = 1 },
-            senderUser = User(
+            senderUser = UserEntity(
                 firstName = "Second",
                 lastName = "Last",
                 avatarId = 3
@@ -433,12 +433,12 @@ private fun MessagesEmptyChatPreview() {
     ExerciseChatTheme {
         MessagesScreen(
             navController = rememberNavController(),
-            receiverUser = User(
+            receiverUser = UserEntity(
                 firstName = "First",
                 lastName = "Last",
                 avatarId = 2
             ).apply { id = 1 },
-            senderUser = User(
+            senderUser = UserEntity(
                 firstName = "Second",
                 lastName = "Last",
                 avatarId = 3

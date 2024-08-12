@@ -1,7 +1,7 @@
 package com.exercisechat.data.source.local
 
 import androidx.room.*
-import com.exercisechat.domain.models.Message
+import com.exercisechat.data.MessageEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -15,13 +15,13 @@ interface MessageDao {
         ORDER BY id DESC
         """
     )
-    fun getAllSorted(senderUserId: Long, receiverUserId: Long): Flow<List<Message>>
+    fun getAllSorted(senderUserId: Long, receiverUserId: Long): Flow<List<MessageEntity>>
 
     @Insert
-    suspend fun insert(vararg messages: Message)
+    suspend fun insert(vararg messages: MessageEntity)
 
     @Delete
-    suspend fun delete(message: Message)
+    suspend fun delete(message: MessageEntity)
 
     @Transaction
     @Query(

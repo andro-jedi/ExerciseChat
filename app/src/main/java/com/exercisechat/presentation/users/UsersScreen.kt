@@ -19,17 +19,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.exercisechat.R
-import com.exercisechat.domain.models.User
+import com.exercisechat.data.UserEntity
 import com.exercisechat.ui.theme.Colors
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UsersScreen(
-    users: List<User>,
+    users: List<UserEntity>,
     currentUserId: Long,
-    onUserClicked: (user: User) -> Unit,
+    onUserClicked: (user: UserEntity) -> Unit,
     addNewUserClicked: () -> Unit,
-    changeActiveUserClicked: (user: User) -> Unit
+    changeActiveUserClicked: (user: UserEntity) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -90,7 +90,12 @@ fun UsersScreen(
 }
 
 @Composable
-private fun UserItem(user: User, currentUserId: Long, onUserClicked: (user: User) -> Unit, modifier: Modifier = Modifier) {
+private fun UserItem(
+    user: UserEntity,
+    currentUserId: Long,
+    onUserClicked: (user: UserEntity) -> Unit,
+    modifier: Modifier = Modifier
+) {
     val isCurrentUser = user.id == currentUserId
     Row(
         modifier = modifier
@@ -126,7 +131,7 @@ private fun UserItem(user: User, currentUserId: Long, onUserClicked: (user: User
 private fun UsersScreenPreview() {
     MaterialTheme {
         UsersScreen(
-            users = listOf(User("Lucash", "Bobkin")),
+            users = listOf(UserEntity("Lucash", "Bobkin")),
             currentUserId = 1,
             onUserClicked = {},
             addNewUserClicked = {},

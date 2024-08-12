@@ -2,20 +2,21 @@ package com.exercisechat.presentation.messages
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.exercisechat.data.UserEntity
+import com.exercisechat.data.toUserEntity
 import com.exercisechat.domain.MessageRepository
 import com.exercisechat.domain.SessionManager
 import com.exercisechat.domain.UserRepository
 import com.exercisechat.domain.models.Message
 import com.exercisechat.domain.models.MessageStatus
-import com.exercisechat.domain.models.User
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.time.Instant
 
 data class MessageUiState(
     val messages: List<Message>,
-    val receiverUser: User? = null,
-    val senderUser: User? = null
+    val receiverUser: UserEntity? = null,
+    val senderUser: UserEntity? = null
 )
 
 class MessageViewModel(
@@ -28,14 +29,14 @@ class MessageViewModel(
     private val _uiState = MutableStateFlow(MessageUiState(emptyList()))
     val uiState: StateFlow<MessageUiState> = _uiState.asStateFlow()
 
-    private lateinit var currentUser: User
+    private lateinit var currentUser: UserEntity
 
     init {
         viewModelScope.launch {
-            currentUser = sessionManager.getCurrentUser()!!
+            currentUser = sessionManager.getCurrentUser()!!.toUserEntity()
 
             userRepository.get(receiverUserId)?.let { user ->
-                _uiState.update { it.copy(receiverUser = user, senderUser = currentUser) }
+                _uiState.update { it.copy(receiverUser = user.toUserEntity(), senderUser = currentUser) }
             }
 
             messageRepository.observeChat(currentUser.id, receiverUserId).collect { messages ->

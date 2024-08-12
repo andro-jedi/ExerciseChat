@@ -12,6 +12,7 @@ room = "2.6.1"
 ksp = "1.9.21-1.0.15"
 koin = "4.0.0-RC1"
 navigation = "2.7.7"
+jetbrainsKotlinJvm = "1.9.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -40,4 +41,5 @@ koin-compose = { group = "io.insert-koin", name = "koin-androidx-compose"}
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
 
