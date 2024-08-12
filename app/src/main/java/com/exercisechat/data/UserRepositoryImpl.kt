@@ -14,4 +14,8 @@ class UserRepositoryImpl(
     override suspend fun add(vararg users: User) {
         userDao.insert(*users)
     }
+
+    override suspend fun get(userId: Int): User? {
+        return userDao.get(userId)
+    }
 }
