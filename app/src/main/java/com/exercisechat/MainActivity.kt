@@ -4,13 +4,14 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.exercisechat.data.User
 import com.exercisechat.ui.messages.MessageViewModel
 import com.exercisechat.ui.messages.MessagesScreen
 import com.exercisechat.ui.theme.ExerciseChatTheme
@@ -34,16 +35,13 @@ class MainActivity : ComponentActivity() {
     @Composable
     private fun MainContent() {
         val navController = rememberNavController()
-        // fake current user session
-        val currentUser by remember {
-            mutableStateOf(User("Santa", "Bremor").apply { id = 99 })
-        }
         NavHost(navController = navController, startDestination = Routes.USERS) {
             composable(route = Routes.USERS) {
                 val viewModel: UsersViewModel = koinViewModel()
-                val uiState = viewModel.uiState.collectAsState()
+                val uiState by viewModel.uiState.collectAsState()
                 UsersScreen(
-                    users = uiState.value.users,
+                    users = uiState.users,
+                    currentUserId = uiState.currentUserId,
                     onUserClicked = { receiverUser ->
                         navController.navigate(
                             route = "chatScreen/${receiverUser.id}"
@@ -51,6 +49,9 @@ class MainActivity : ComponentActivity() {
                     },
                     addNewUserClicked = {
                         viewModel.generateNewUser()
+                    },
+                    changeActiveUserClicked = { user ->
+                        viewModel.changeActiveUser(user.id)
                     }
                 )
             }
@@ -59,16 +60,15 @@ class MainActivity : ComponentActivity() {
                 route = Routes.CHAT,
                 arguments = listOf(navArgument("receiverUserId") { type = NavType.LongType })
             ) { backStackEntry ->
-                val receiverUserId = backStackEntry.arguments?.getInt("receiverUserId")
-                val viewModel: MessageViewModel = koinViewModel { parametersOf(currentUser.id, receiverUserId) }
-                val uiState = viewModel.uiState.collectAsState()
                 val receiverUserId = backStackEntry.arguments?.getLong("receiverUserId")
+                val viewModel: MessageViewModel = koinViewModel { parametersOf(receiverUserId) }
+                val uiState by viewModel.uiState.collectAsState()
 
                 MessagesScreen(
                     navController = navController,
-                    senderUser = currentUser,
-                    receiverUser = uiState.value.receiverUser, // TODO
-                    messages = uiState.value.messages,
+                    senderUser = uiState.senderUser,
+                    receiverUser = uiState.receiverUser,
+                    messages = uiState.messages,
                     onSendMessage = { message ->
                         viewModel.sendMessage(message)
                     },

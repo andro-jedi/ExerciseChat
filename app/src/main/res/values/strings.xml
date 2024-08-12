@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">ChatExercise</string>
     <string name="text_empty_chat">This chat is empty</string>
+    <string name="text_your">you</string>
 </resources>

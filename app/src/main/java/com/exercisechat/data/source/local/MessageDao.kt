@@ -6,7 +6,12 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MessageDao {
-    @Query("SELECT * FROM message WHERE senderUserId == :senderUserId AND receiverUserId == :receiverUserId ORDER BY id DESC")
+    @Query("""
+        SELECT * FROM message 
+        WHERE (senderUserId == :senderUserId AND receiverUserId == :receiverUserId) 
+        OR (senderUserId == :receiverUserId AND receiverUserId == :senderUserId) 
+        ORDER BY id DESC
+        """)
     fun getAllSorted(senderUserId: Long, receiverUserId: Long): Flow<List<Message>>
 
     @Insert

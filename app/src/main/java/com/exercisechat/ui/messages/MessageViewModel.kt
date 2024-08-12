@@ -3,34 +3,38 @@ package com.exercisechat.ui.messages
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.exercisechat.data.*
+import com.exercisechat.domain.SessionManager
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.time.Instant
 
 data class MessageUiState(
     val messages: List<Message>,
-    val receiverUser: User? = null
+    val receiverUser: User? = null,
+    val senderUser: User? = null
 )
 
 class MessageViewModel(
-    private val currentUserId: Long,
     private val receiverUserId: Long,
     private val messageRepository: MessageRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val sessionManager: SessionManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MessageUiState(emptyList()))
     val uiState: StateFlow<MessageUiState> = _uiState.asStateFlow()
 
+    private lateinit var currentUser: User
+
     init {
         viewModelScope.launch {
-            userRepository.get(receiverUserId)?.let { user ->
-                _uiState.update { it.copy(receiverUser = user) }
-            }
-        }
+            currentUser = sessionManager.getCurrentUser()!!
 
-        viewModelScope.launch {
-            messageRepository.observeChat(currentUserId, receiverUserId).collect { messages ->
+            userRepository.get(receiverUserId)?.let { user ->
+                _uiState.update { it.copy(receiverUser = user, senderUser = currentUser) }
+            }
+
+            messageRepository.observeChat(currentUser.id, receiverUserId).collect { messages ->
                 _uiState.update { it.copy(messages = messages) }
             }
         }
@@ -41,7 +45,7 @@ class MessageViewModel(
             messageRepository.add(
                 Message(
                     text = message,
-                    currentUserId,
+                    currentUser.id,
                     receiverUserId,
                     MessageStatus.SENT,
                     Instant.now()
@@ -52,7 +56,7 @@ class MessageViewModel(
 
     fun clearChat() {
         viewModelScope.launch {
-            messageRepository.clearChat(currentUserId, receiverUserId)
+            messageRepository.clearChat(currentUser.id, receiverUserId)
         }
     }
 }

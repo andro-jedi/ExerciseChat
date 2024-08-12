@@ -47,7 +47,7 @@ private val timestampFormatter = DateTimeFormatter.ofPattern("EEEE HH:mm").withZ
 @Composable
 fun MessagesScreen(
     navController: NavHostController,
-    senderUser: User,
+    senderUser: User?,
     receiverUser: User?,
     messages: List<Message>,
     onSendMessage: (message: String) -> Unit,
@@ -113,23 +113,24 @@ fun MessagesScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if (messages.isEmpty()) {
-                Text(
-                    modifier = Modifier
-                        .wrapContentSize()
-                        .weight(1f),
-                    color = Colors.DarkGrey,
-                    text = stringResource(id = R.string.text_empty_chat),
-                    fontSize = 24.sp
-                )
+                EmptyChat()
             } else {
-                MessagesColumn(
-                    modifier = Modifier
-                        .padding(12.dp)
-                        .fillMaxSize()
-                        .weight(1f),
-                    messages = messages,
-                    senderUser = senderUser,
-                )
+                if (senderUser != null) {
+                    MessagesColumn(
+                        modifier = Modifier
+                            .padding(12.dp)
+                            .fillMaxSize()
+                            .weight(1f),
+                        messages = messages,
+                        senderUser = senderUser,
+                    )
+                } else {
+                    LoadingChat(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .weight(1f)
+                    )
+                }
             }
             Spacer(
                 modifier = Modifier
@@ -153,6 +154,27 @@ fun MessagesScreen(
             }
         }
     }
+}
+
+@Composable
+fun LoadingChat(modifier: Modifier = Modifier) {
+    Box(modifier, contentAlignment = Alignment.Center) {
+        CircularProgressIndicator(
+            modifier = Modifier.size(64.dp),
+        )
+    }
+}
+
+@Composable
+fun ColumnScope.EmptyChat() {
+    Text(
+        modifier = Modifier
+            .wrapContentSize()
+            .weight(1f),
+        color = Colors.DarkGrey,
+        text = stringResource(id = R.string.text_empty_chat),
+        fontSize = 24.sp
+    )
 }
 
 @Composable
@@ -231,6 +253,7 @@ private fun MessagesColumn(
      * Returns the spacing between the current message and the previous message.
      *
      * @param previousMessage the previous message, or null if this is the first message
+     * @param currentMessage the current message
      * @return large or small spacing
      */
     fun getMessageSpacing(previousMessage: Message?, currentMessage: Message): Dp {
@@ -258,11 +281,21 @@ private fun MessagesColumn(
             val previousMessage = messages.getOrNull(index + 1)
 
             val messageSpacing = getMessageSpacing(previousMessage, message)
+
+            val isCurrentUser = message.senderUserId == senderUser.id
+            // prevent the bubble to take all width of the screen to make UI more readable
+            val bubblePadding = if (isCurrentUser) {
+                Modifier.padding(start = 48.dp)
+            } else {
+                Modifier.padding(end = 48.dp)
+            }
             MessageBubble(
-                modifier = Modifier.padding(top = messageSpacing, start = 48.dp),
+                modifier = Modifier
+                    .padding(top = messageSpacing)
+                    .then(bubblePadding),
                 text = message.text,
                 status = MessageStatus.SENT,
-                isCurrentUser = message.senderUserId == senderUser.id
+                isCurrentUser = isCurrentUser
             )
 
             // display timestamp if a previous message was sent more than an hour ago, or there is no previous messages
@@ -411,6 +444,29 @@ private fun MessagesEmptyChatPreview() {
                 avatarId = 3
             ).apply { id = 2 },
             messages = emptyList(),
+            onSendMessage = {},
+            onChatCleared = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun MessagesLoadingChatPreview() {
+    ExerciseChatTheme {
+        MessagesScreen(
+            navController = rememberNavController(),
+            receiverUser = null,
+            senderUser = null,
+            messages = listOf(
+                Message(
+                    text = "Hello World!",
+                    senderUserId = 2,
+                    receiverUserId = 1,
+                    status = MessageStatus.SENT,
+                    Instant.ofEpochSecond(123456789)
+                )
+            ),
             onSendMessage = {},
             onChatCleared = {}
         )
