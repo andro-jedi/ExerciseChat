@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface MessageDao {
     @Query("SELECT * FROM message WHERE senderUserId == :senderUserId AND receiverUserId == :receiverUserId ORDER BY id DESC")
-    fun getAllSorted(senderUserId: Int, receiverUserId: Int): Flow<List<Message>>
+    fun getAllSorted(senderUserId: Long, receiverUserId: Long): Flow<List<Message>>
 
     @Insert
     suspend fun insert(vararg messages: Message)
@@ -17,5 +17,5 @@ interface MessageDao {
 
     @Transaction
     @Query("DELETE FROM message WHERE senderUserId = :senderId AND receiverUserId = :receiverId")
-    suspend fun deleteAllMessagesBetween(senderId: Int, receiverId: Int)
+    suspend fun deleteAllMessagesBetween(senderId: Long, receiverId: Long)
 }

@@ -7,8 +7,8 @@ import java.time.Instant
 @Entity(tableName = "message")
 data class Message(
     val text: String,
-    val senderUserId: Int,
-    val receiverUserId: Int,
+    val senderUserId: Long,
+    val receiverUserId: Long,
     val status: MessageStatus,
     val timestamp: Instant
 ) {

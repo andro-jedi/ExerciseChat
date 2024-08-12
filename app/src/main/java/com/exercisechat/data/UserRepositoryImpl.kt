@@ -11,11 +11,15 @@ class UserRepositoryImpl(
         return userDao.getAll()
     }
 
-    override suspend fun add(vararg users: User) {
-        userDao.insert(*users)
+    override suspend fun add(user: User): Long {
+        return userDao.insert(user)
     }
 
-    override suspend fun get(userId: Int): User? {
+    override suspend fun addAll(vararg users: User) {
+        userDao.insertAll(*users)
+    }
+
+    override suspend fun get(userId: Long): User? {
         return userDao.get(userId)
     }
 }

@@ -57,11 +57,12 @@ class MainActivity : ComponentActivity() {
 
             composable(
                 route = Routes.CHAT,
-                arguments = listOf(navArgument("receiverUserId") { type = NavType.IntType })
+                arguments = listOf(navArgument("receiverUserId") { type = NavType.LongType })
             ) { backStackEntry ->
                 val receiverUserId = backStackEntry.arguments?.getInt("receiverUserId")
                 val viewModel: MessageViewModel = koinViewModel { parametersOf(currentUser.id, receiverUserId) }
                 val uiState = viewModel.uiState.collectAsState()
+                val receiverUserId = backStackEntry.arguments?.getLong("receiverUserId")
 
                 MessagesScreen(
                     navController = navController,

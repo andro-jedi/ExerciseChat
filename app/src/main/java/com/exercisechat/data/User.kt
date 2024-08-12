@@ -12,7 +12,7 @@ data class User(
 ) {
 
     @PrimaryKey(autoGenerate = true)
-    var id: Int = 0
+    var id: Long = 0
 
     val fullName: String
         get() = "$firstName $lastName"

@@ -13,8 +13,8 @@ data class MessageUiState(
 )
 
 class MessageViewModel(
-    private val currentUserId: Int,
-    private val receiverUserId: Int,
+    private val currentUserId: Long,
+    private val receiverUserId: Long,
     private val messageRepository: MessageRepository,
     private val userRepository: UserRepository
 ) : ViewModel() {

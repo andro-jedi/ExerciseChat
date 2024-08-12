@@ -7,7 +7,7 @@ class MessageRepositoryImpl(
     private val messageDao: MessageDao
 ) : MessageRepository {
 
-    override suspend fun observeChat(senderUserId: Int, receiverUserId: Int): Flow<List<Message>> {
+    override suspend fun observeChat(senderUserId: Long, receiverUserId: Long): Flow<List<Message>> {
         return messageDao.getAllSorted(senderUserId, receiverUserId)
     }
 
@@ -15,7 +15,7 @@ class MessageRepositoryImpl(
         messageDao.insert(message)
     }
 
-    override suspend fun clearChat(currentUserId: Int, receiverUserId: Int) {
+    override suspend fun clearChat(currentUserId: Long, receiverUserId: Long) {
         messageDao.deleteAllMessagesBetween(currentUserId, receiverUserId)
     }
 }

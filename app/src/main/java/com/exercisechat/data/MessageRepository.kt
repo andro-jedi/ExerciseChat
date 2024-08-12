@@ -7,7 +7,7 @@ interface MessageRepository {
     /**
      * Observe a chat between two users
      */
-    suspend fun observeChat(senderUserId: Int, receiverUserId: Int): Flow<List<Message>>
+    suspend fun observeChat(senderUserId: Long, receiverUserId: Long): Flow<List<Message>>
 
     /**
      * Add new message to the chat
@@ -17,5 +17,5 @@ interface MessageRepository {
     /**
      * Clear chat between two users
      */
-    suspend fun clearChat(currentUserId: Int, receiverUserId: Int)
+    suspend fun clearChat(currentUserId: Long, receiverUserId: Long)
 }
