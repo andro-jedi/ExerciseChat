@@ -2,11 +2,11 @@ package com.exercisechat.presentation.users
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.exercisechat.SessionManagerImpl
 import com.exercisechat.data.UserEntity
 import com.exercisechat.data.UserMock
 import com.exercisechat.data.toUserEntity
 import com.exercisechat.domain.DispatchersProvider
+import com.exercisechat.domain.SessionManager
 import com.exercisechat.domain.UserRepository
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -18,7 +18,7 @@ data class UsersUiState(
 
 class UsersViewModel(
     private val userRepository: UserRepository,
-    private val sessionManager: SessionManagerImpl,
+    private val sessionManager: SessionManager,
     private val dispatchersProvider: DispatchersProvider
 ) : ViewModel() {
 

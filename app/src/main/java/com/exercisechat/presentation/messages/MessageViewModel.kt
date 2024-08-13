@@ -38,14 +38,15 @@ class MessageViewModel(
             userRepository.get(receiverUserId)?.let { user ->
                 _uiState.update { it.copy(receiverUser = user.toUserEntity(), senderUser = currentUser) }
             }
-
+        }
+        viewModelScope.launch(dispatchersProvider.io) {
             messageRepository.observeChat(currentUser.id, receiverUserId).collect { messages ->
                 _uiState.update { it.copy(messages = messages) }
             }
         }
     }
 
-    fun sendMessage(message: String) {
+    fun sendMessage(message: String, timestamp: Instant = Instant.now()) {
         viewModelScope.launch(dispatchersProvider.io) {
             messageRepository.add(
                 Message(
@@ -53,7 +54,7 @@ class MessageViewModel(
                     currentUser.id,
                     receiverUserId,
                     MessageStatus.SENT,
-                    Instant.now()
+                    timestamp
                 )
             )
         }

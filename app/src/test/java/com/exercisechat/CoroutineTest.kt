@@ -8,7 +8,10 @@ import org.junit.Rule
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 
-open class CoroutineTest(testDispatcher: TestDispatcher = StandardTestDispatcher()) {
+/**
+ * Base class for test classes
+ */
+open class CoroutineTest(val testDispatcher: TestDispatcher = StandardTestDispatcher()) {
 
     val dispatchers = TestDispatchersProvider(testDispatcher)
 
