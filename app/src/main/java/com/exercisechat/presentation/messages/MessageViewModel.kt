@@ -4,9 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.exercisechat.data.UserEntity
 import com.exercisechat.data.toUserEntity
-import com.exercisechat.domain.MessageRepository
-import com.exercisechat.domain.SessionManager
-import com.exercisechat.domain.UserRepository
+import com.exercisechat.domain.*
 import com.exercisechat.domain.models.Message
 import com.exercisechat.domain.models.MessageStatus
 import kotlinx.coroutines.flow.*
@@ -23,7 +21,8 @@ class MessageViewModel(
     private val receiverUserId: Long,
     private val messageRepository: MessageRepository,
     private val userRepository: UserRepository,
-    private val sessionManager: SessionManager
+    private val sessionManager: SessionManager,
+    private val dispatchersProvider: DispatchersProvider
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MessageUiState(emptyList()))
@@ -32,7 +31,8 @@ class MessageViewModel(
     private lateinit var currentUser: UserEntity
 
     init {
-        viewModelScope.launch {
+        viewModelScope.launch(dispatchersProvider.io) {
+            // can't be null at this point for demo purposes
             currentUser = sessionManager.getCurrentUser()!!.toUserEntity()
 
             userRepository.get(receiverUserId)?.let { user ->
@@ -46,7 +46,7 @@ class MessageViewModel(
     }
 
     fun sendMessage(message: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(dispatchersProvider.io) {
             messageRepository.add(
                 Message(
                     text = message,
@@ -60,7 +60,7 @@ class MessageViewModel(
     }
 
     fun clearChat() {
-        viewModelScope.launch {
+        viewModelScope.launch(dispatchersProvider.io) {
             messageRepository.clearChat(currentUser.id, receiverUserId)
         }
     }

@@ -6,6 +6,7 @@ import com.exercisechat.SessionManagerImpl
 import com.exercisechat.data.UserEntity
 import com.exercisechat.data.UserMock
 import com.exercisechat.data.toUserEntity
+import com.exercisechat.domain.DispatchersProvider
 import com.exercisechat.domain.UserRepository
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -17,14 +18,15 @@ data class UsersUiState(
 
 class UsersViewModel(
     private val userRepository: UserRepository,
-    private val sessionManager: SessionManagerImpl
+    private val sessionManager: SessionManagerImpl,
+    private val dispatchersProvider: DispatchersProvider
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(UsersUiState(emptyList()))
     val uiState: StateFlow<UsersUiState> = _uiState.asStateFlow()
 
     init {
-        viewModelScope.launch {
+        viewModelScope.launch(dispatchersProvider.io) {
             userRepository.observeAll().combine(sessionManager.observeCurrentUserId()) { users, currentUserId ->
                 users to currentUserId
             }.collect { (users, currentUserId) ->
@@ -37,7 +39,7 @@ class UsersViewModel(
      * Generate random new user and add it to the database
      */
     fun generateNewUser() {
-        viewModelScope.launch {
+        viewModelScope.launch(dispatchersProvider.io) {
             val id = userRepository.add(UserMock.newUser())
             // if current session is empty init it with first added user for demo purposes
             // it will be possible to change session user id later on users screen
@@ -48,7 +50,7 @@ class UsersViewModel(
     }
 
     fun changeActiveUser(userId: Long) {
-        viewModelScope.launch {
+        viewModelScope.launch(dispatchersProvider.io) {
             sessionManager.setCurrentUser(userId)
 
             _uiState.update { it.copy(currentUserId = userId) }

@@ -15,6 +15,9 @@ navigation = "2.7.7"
 jetbrainsKotlinJvm = "1.9.0"
 appcompat = "1.7.0"
 material = "1.12.0"
+coroutineTest = "1.8.0"
+androidx-coreTesting = "2.2.0"
+androidx-test-core = "1.6.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -32,6 +35,7 @@ androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-man
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-navigation = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
+kotlinx-coroutine-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutineTest" }
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
@@ -40,6 +44,9 @@ koin-android = { group = "io.insert-koin", name = "koin-android"}
 koin-compose = { group = "io.insert-koin", name = "koin-androidx-compose"}
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+tests-arch-core = { module = "androidx.arch.core:core-testing", version.ref = "androidx-coreTesting" }
+tests-core = { module = "androidx.test:core", version.ref = "androidx-test-core" }
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
