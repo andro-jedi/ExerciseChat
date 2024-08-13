@@ -7,9 +7,11 @@ import com.exercisechat.data.toUserEntity
 import com.exercisechat.domain.*
 import com.exercisechat.domain.models.Message
 import com.exercisechat.domain.models.MessageStatus
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.time.Instant
+import kotlin.time.Duration.Companion.seconds
 
 data class MessageUiState(
     val messages: List<Message>,
@@ -38,8 +40,7 @@ class MessageViewModel(
             userRepository.get(receiverUserId)?.let { user ->
                 _uiState.update { it.copy(receiverUser = user.toUserEntity(), senderUser = currentUser) }
             }
-        }
-        viewModelScope.launch(dispatchersProvider.io) {
+
             messageRepository.observeChat(currentUser.id, receiverUserId).collect { messages ->
                 _uiState.update { it.copy(messages = messages) }
             }
@@ -48,7 +49,7 @@ class MessageViewModel(
 
     fun sendMessage(message: String, timestamp: Instant = Instant.now()) {
         viewModelScope.launch(dispatchersProvider.io) {
-            messageRepository.add(
+            val messageId = messageRepository.add(
                 Message(
                     text = message,
                     currentUser.id,
@@ -57,6 +58,14 @@ class MessageViewModel(
                     timestamp
                 )
             )
+
+            launch {
+                // simulate some delay for demo purposes
+                delay((1..3).random().seconds)
+                messageRepository.get(messageId)?.copy(status = MessageStatus.DELIVERED)?.let {
+                    messageRepository.updateMessage(it)
+                }
+            }
         }
     }
 

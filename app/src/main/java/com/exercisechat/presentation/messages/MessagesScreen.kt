@@ -7,6 +7,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -294,7 +296,7 @@ private fun MessagesColumn(
                     .padding(top = messageSpacing)
                     .then(bubblePadding),
                 text = message.text,
-                status = MessageStatus.SENT,
+                status = message.status,
                 isCurrentUser = isCurrentUser
             )
 
@@ -377,7 +379,7 @@ private fun MessageBubble(
                         .padding(4.dp)
                         .size(16.dp)
                         .align(Alignment.BottomEnd),
-                    painter = painterResource(id = R.drawable.checkmark),
+                    imageVector = Icons.Filled.Check,
                     contentDescription = "message status",
                     colorFilter = ColorFilter.tint(statusColor)
                 )

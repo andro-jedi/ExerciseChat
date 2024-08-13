@@ -2,6 +2,7 @@ package com.exercisechat.data.source.local
 
 import androidx.room.*
 import com.exercisechat.data.MessageEntity
+import com.exercisechat.domain.models.MessageStatus
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -18,10 +19,16 @@ interface MessageDao {
     fun getAllSorted(senderUserId: Long, receiverUserId: Long): Flow<List<MessageEntity>>
 
     @Insert
-    suspend fun insert(vararg messages: MessageEntity)
+    suspend fun insert(message: MessageEntity): Long
 
     @Delete
     suspend fun delete(message: MessageEntity)
+
+    @Query("SELECT * FROM message WHERE id = :messageId")
+    suspend fun get(messageId: Long): MessageEntity?
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun update(message: MessageEntity)
 
     @Transaction
     @Query(
@@ -31,4 +38,7 @@ interface MessageDao {
         """
     )
     suspend fun deleteAllMessagesBetween(senderId: Long, receiverId: Long)
+
+    @Query("UPDATE message SET status = :status WHERE id = :messageId")
+    suspend fun updateStatus(messageId: Long, status: MessageStatus)
 }

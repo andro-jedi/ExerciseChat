@@ -1,6 +1,7 @@
 package com.exercisechat.domain
 
 import com.exercisechat.domain.models.Message
+import com.exercisechat.domain.models.MessageStatus
 import kotlinx.coroutines.flow.Flow
 
 interface MessageRepository {
@@ -13,7 +14,22 @@ interface MessageRepository {
     /**
      * Add new message to the chat
      */
-    suspend fun add(message: Message)
+    suspend fun add(message: Message): Long
+
+    /**
+     * Get message by id
+     */
+    suspend fun get(id: Long): Message?
+
+    /**
+     * Update message
+     */
+    suspend fun updateMessage(message: Message)
+
+    /**
+     * Update message status
+     */
+    suspend fun updateStatus(messageId: Long, status: MessageStatus)
 
     /**
      * Clear chat between two users
