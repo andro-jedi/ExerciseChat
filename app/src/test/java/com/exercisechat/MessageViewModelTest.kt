@@ -50,6 +50,7 @@ class MessageViewModelTest : CoroutineTest() {
     fun `sendMessage adds message to repository`() = runTest {
         val messageText = "Hello"
         whenever(userRepository.get(any())).thenReturn(User(2, "Receiver", "User"))
+        whenever(messageRepository.add(any())).thenReturn(1)
         val viewModel = provideViewModel()
         viewModel.sendMessage(messageText)
 
