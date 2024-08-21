@@ -69,10 +69,10 @@ class MainActivity : ComponentActivity() {
                     senderUser = uiState.senderUser,
                     receiverUser = uiState.receiverUser,
                     messages = uiState.messages,
-                    onSendMessage = { message ->
+                    onSendMessageClicked = { message ->
                         viewModel.sendMessage(message)
                     },
-                    onChatCleared = {
+                    onChatClearClicked = {
                         viewModel.clearChat()
                     }
                 )
@@ -81,7 +81,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-object Routes {
+private object Routes {
 
     const val USERS = "usersScreen"
     const val CHAT = "chatScreen/{receiverUserId}"

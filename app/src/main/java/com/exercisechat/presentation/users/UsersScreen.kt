@@ -22,7 +22,6 @@ import com.exercisechat.R
 import com.exercisechat.data.UserEntity
 import com.exercisechat.ui.theme.Colors
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UsersScreen(
     users: List<UserEntity>,
@@ -33,47 +32,7 @@ fun UsersScreen(
 ) {
     Scaffold(
         topBar = {
-            var showMenu by remember { mutableStateOf(false) }
-            Box(
-                Modifier
-                    .shadow(4.dp)
-                    .background(MaterialTheme.colorScheme.primary)
-            ) {
-                TopAppBar(
-                    title = {
-                        Text(
-                            text = "Contacts",
-                            fontSize = 24.sp
-                        )
-                    },
-                    actions = {
-                        IconButton(onClick = addNewUserClicked) {
-                            Icon(imageVector = Icons.Filled.AddCircle, contentDescription = "Add user")
-                        }
-                        if (users.size > 1) {
-                            IconButton(onClick = { showMenu = !showMenu }) {
-                                Icon(
-                                    imageVector = Icons.Filled.Refresh,
-                                    contentDescription = "Change user"
-                                )
-                            }
-                            DropdownMenu(
-                                expanded = showMenu,
-                                onDismissRequest = { showMenu = false }
-                            ) {
-                                users.forEach {
-                                    DropdownMenuItem(
-                                        text = { Text(it.fullName) },
-                                        onClick = {
-                                            changeActiveUserClicked(it)
-                                            showMenu = false
-                                        })
-                                }
-                            }
-                        }
-                    }
-                )
-            }
+            UsersListTopBar(users, addNewUserClicked, changeActiveUserClicked)
         },
         content = { paddingValues ->
             LazyColumn(
@@ -82,7 +41,11 @@ fun UsersScreen(
                     .fillMaxSize()
             ) {
                 items(users, key = { user -> user.id }) { user ->
-                    UserItem(user, currentUserId, onUserClicked)
+                    UserItem(
+                        user = user,
+                        isCurrentUser = user.id == currentUserId,
+                        onUserClicked = onUserClicked
+                    )
                 }
             }
         }
@@ -90,13 +53,62 @@ fun UsersScreen(
 }
 
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun UsersListTopBar(
+    users: List<UserEntity>,
+    addNewUserClicked: () -> Unit,
+    changeActiveUserClicked: (user: UserEntity) -> Unit
+) {
+    var showMenu by remember { mutableStateOf(false) }
+    Box(
+        Modifier
+            .shadow(4.dp)
+            .background(MaterialTheme.colorScheme.primary)
+    ) {
+        TopAppBar(
+            title = {
+                Text(
+                    text = "Contacts",
+                    fontSize = 24.sp
+                )
+            },
+            actions = {
+                IconButton(onClick = addNewUserClicked) {
+                    Icon(imageVector = Icons.Filled.AddCircle, contentDescription = "Add user")
+                }
+                if (users.size > 1) {
+                    IconButton(onClick = { showMenu = !showMenu }) {
+                        Icon(
+                            imageVector = Icons.Filled.Refresh,
+                            contentDescription = "Change user"
+                        )
+                    }
+                    DropdownMenu(
+                        expanded = showMenu,
+                        onDismissRequest = { showMenu = false }
+                    ) {
+                        users.forEach {
+                            DropdownMenuItem(
+                                text = { Text(it.fullName) },
+                                onClick = {
+                                    changeActiveUserClicked(it)
+                                    showMenu = false
+                                })
+                        }
+                    }
+                }
+            }
+        )
+    }
+}
+
+@Composable
 private fun UserItem(
     user: UserEntity,
-    currentUserId: Long,
+    isCurrentUser: Boolean,
     onUserClicked: (user: UserEntity) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val isCurrentUser = user.id == currentUserId
     Row(
         modifier = modifier
             .height(80.dp)

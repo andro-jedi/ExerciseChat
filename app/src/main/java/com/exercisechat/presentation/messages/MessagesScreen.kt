@@ -41,71 +41,22 @@ import java.time.format.DateTimeFormatter
 
 private const val SMALL_MESSAGE_SPACING = 4
 private const val LARGE_MESSAGE_SPACING = 12
-private val applyLargeSpacingAfter = Duration.ofSeconds(20)
 
+private val applyLargeSpacingAfter = Duration.ofSeconds(20)
 private val timestampFormatter = DateTimeFormatter.ofPattern("EEEE HH:mm").withZone(ZoneId.systemDefault())
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MessagesScreen(
     navController: NavHostController,
     senderUser: UserEntity?,
     receiverUser: UserEntity?,
     messages: List<Message>,
-    onSendMessage: (message: String) -> Unit,
-    onChatCleared: () -> Unit
+    onSendMessageClicked: (message: String) -> Unit,
+    onChatClearClicked: () -> Unit
 ) {
     Scaffold(
         topBar = {
-            var showMenu by remember { mutableStateOf(false) }
-            TopAppBar(
-                modifier = Modifier
-                    .shadow(4.dp)
-                    .background(MaterialTheme.colorScheme.primary),
-                title = {
-                    Row(modifier = Modifier.wrapContentWidth(), verticalAlignment = Alignment.CenterVertically) {
-                        if (receiverUser != null) {
-                            Image(
-                                modifier = Modifier.size(48.dp),
-                                painter = painterResource(id = getUserAvatar(receiverUser.avatarId)),
-                                contentDescription = "avatar"
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = receiverUser.firstName,
-                                fontSize = 18.sp
-                            )
-                        }
-                    }
-                },
-                navigationIcon = {
-                    IconButton(onClick = {
-                        navController.navigateUp()
-                    }, content = {
-                        Image(
-                            painter = painterResource(id = R.drawable.arrow_back_ios_24),
-                            contentDescription = "avatar"
-                        )
-                    })
-                },
-                actions = {
-                    IconButton(onClick = { showMenu = !showMenu }) {
-                        Icon(painter = painterResource(id = R.drawable.baseline_more_horiz_24), contentDescription = "More")
-                    }
-                    DropdownMenu(
-                        expanded = showMenu,
-                        onDismissRequest = { showMenu = false }
-                    ) {
-                        DropdownMenuItem(
-                            text = { Text("Clear history") },
-                            onClick = {
-                                onChatCleared()
-                                showMenu = false
-                            }
-                        )
-                    }
-                }
-            )
+            ChatTopBar(receiverUser, navController, onChatClearClicked)
         }
     ) { innerPadding ->
         Column(
@@ -115,7 +66,7 @@ fun MessagesScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if (messages.isEmpty()) {
-                EmptyChat()
+                EmptyChat(Modifier.weight(1f))
             } else {
                 if (senderUser != null) {
                     MessagesColumn(
@@ -127,13 +78,14 @@ fun MessagesScreen(
                         senderUser = senderUser,
                     )
                 } else {
-                    LoadingChat(
+                    ChatLoadingProgress(
                         modifier = Modifier
                             .fillMaxSize()
                             .weight(1f)
                     )
                 }
             }
+            // add top shadow to the input field
             Spacer(
                 modifier = Modifier
                     .height(4.dp)
@@ -151,7 +103,7 @@ fun MessagesScreen(
             Box(modifier = Modifier.fillMaxWidth()) {
                 MessageInputField(
                     modifier = Modifier.padding(12.dp),
-                    onSendMessage = onSendMessage
+                    onSendMessage = onSendMessageClicked
                 )
             }
         }
@@ -159,7 +111,65 @@ fun MessagesScreen(
 }
 
 @Composable
-fun LoadingChat(modifier: Modifier = Modifier) {
+@OptIn(ExperimentalMaterial3Api::class)
+private fun ChatTopBar(
+    receiverUser: UserEntity?,
+    navController: NavHostController,
+    onChatClearClicked: () -> Unit
+) {
+    var showMenu by remember { mutableStateOf(false) }
+    TopAppBar(
+        modifier = Modifier
+            .shadow(4.dp)
+            .background(MaterialTheme.colorScheme.primary),
+        title = {
+            Row(modifier = Modifier.wrapContentWidth(), verticalAlignment = Alignment.CenterVertically) {
+                if (receiverUser != null) {
+                    Image(
+                        modifier = Modifier.size(48.dp),
+                        painter = painterResource(id = getUserAvatar(receiverUser.avatarId)),
+                        contentDescription = "avatar"
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = receiverUser.firstName,
+                        fontSize = 18.sp
+                    )
+                }
+            }
+        },
+        navigationIcon = {
+            IconButton(onClick = {
+                navController.navigateUp()
+            }, content = {
+                Image(
+                    painter = painterResource(id = R.drawable.arrow_back_ios_24),
+                    contentDescription = "avatar"
+                )
+            })
+        },
+        actions = {
+            IconButton(onClick = { showMenu = !showMenu }) {
+                Icon(painter = painterResource(id = R.drawable.baseline_more_horiz_24), contentDescription = "More")
+            }
+            DropdownMenu(
+                expanded = showMenu,
+                onDismissRequest = { showMenu = false }
+            ) {
+                DropdownMenuItem(
+                    text = { Text("Clear history") },
+                    onClick = {
+                        onChatClearClicked()
+                        showMenu = false
+                    }
+                )
+            }
+        }
+    )
+}
+
+@Composable
+private fun ChatLoadingProgress(modifier: Modifier = Modifier) {
     Box(modifier, contentAlignment = Alignment.Center) {
         CircularProgressIndicator(
             modifier = Modifier.size(64.dp),
@@ -168,11 +178,10 @@ fun LoadingChat(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun ColumnScope.EmptyChat() {
+private fun EmptyChat(modifier: Modifier = Modifier) {
     Text(
-        modifier = Modifier
-            .wrapContentSize()
-            .weight(1f),
+        modifier = modifier
+            .wrapContentSize(),
         color = Colors.DarkGrey,
         text = stringResource(id = R.string.text_empty_chat),
         fontSize = 24.sp
@@ -180,16 +189,19 @@ fun ColumnScope.EmptyChat() {
 }
 
 @Composable
-fun MessageInputField(
+private fun MessageInputField(
     modifier: Modifier = Modifier,
     onSendMessage: (String) -> Unit
 ) {
     var textState by remember { mutableStateOf(TextFieldValue("")) }
     var isFocused by remember { mutableStateOf(false) }
 
+    /**
+     * Sends the message and clears the input field.
+     */
     fun sendMessage() {
         onSendMessage(textState.text)
-        textState = TextFieldValue("") // Clear the input field after sending
+        textState = TextFieldValue("")
     }
 
     Row(
@@ -302,11 +314,11 @@ private fun MessagesColumn(
 
             // display timestamp if a previous message was sent more than an hour ago, or there is no previous messages
             if (previousMessage == null) {
-                MessageTimestamp(message.timestamp)
+                MessageTimestampHeader(message.timestamp)
             } else {
                 val messageAge = Duration.between(previousMessage.timestamp, message.timestamp)
                 if (messageAge.toHours() > 1) {
-                    MessageTimestamp(message.timestamp)
+                    MessageTimestampHeader(message.timestamp)
                 }
             }
         }
@@ -314,7 +326,7 @@ private fun MessagesColumn(
 }
 
 @Composable
-private fun MessageTimestamp(timestamp: Instant) {
+private fun MessageTimestampHeader(timestamp: Instant) {
     val (day, time) = timestampFormatter.format(timestamp).split(" ")
 
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
@@ -425,8 +437,8 @@ private fun MessagesScreenPreview() {
                     Instant.ofEpochSecond(123456789)
                 )
             ),
-            onSendMessage = {},
-            onChatCleared = {}
+            onSendMessageClicked = {},
+            onChatClearClicked = {}
         )
     }
 }
@@ -450,8 +462,8 @@ private fun MessagesEmptyChatPreview() {
                 avatarId = 3
             ),
             messages = emptyList(),
-            onSendMessage = {},
-            onChatCleared = {}
+            onSendMessageClicked = {},
+            onChatClearClicked = {}
         )
     }
 }
@@ -473,8 +485,8 @@ private fun MessagesLoadingChatPreview() {
                     Instant.ofEpochSecond(123456789)
                 )
             ),
-            onSendMessage = {},
-            onChatCleared = {}
+            onSendMessageClicked = {},
+            onChatClearClicked = {}
         )
     }
 }
@@ -504,6 +516,6 @@ private fun MessagesInputPreview() {
 @Composable
 private fun MessagesTimestampPreview() {
     ExerciseChatTheme {
-        MessageTimestamp(timestamp = Instant.now())
+        MessageTimestampHeader(timestamp = Instant.now())
     }
 }
