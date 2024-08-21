@@ -22,7 +22,7 @@ import java.time.Instant
 @OptIn(ExperimentalCoroutinesApi::class)
 class MessageViewModelTest : CoroutineTest() {
 
-    private val currentUser = UserEntity("Current", "User", 1).apply { id = 1L }
+    private val currentUser = UserEntity(1, "Current", "User", 1)
     private val currentUserDomain = currentUser.toUserDomain()
 
     private val sessionManager: SessionManager = mock {
@@ -78,7 +78,7 @@ class MessageViewModelTest : CoroutineTest() {
 
     @Test
     fun `uiState is updated with messages and users`() = runTest {
-        val receiverUser = UserEntity("Receiver", "User").apply { id = 2 }
+        val receiverUser = UserEntity(2, "Receiver", "User")
         val messages = listOf(
             Message("Hi", currentUser.id, 2, MessageStatus.SENT, Instant.now()),
             Message("Hello", 2, currentUser.id, MessageStatus.SENT, Instant.now())

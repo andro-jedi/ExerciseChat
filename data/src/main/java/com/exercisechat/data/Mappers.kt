@@ -15,10 +15,11 @@ fun UserEntity.toUserDomain(): User {
 
 fun User.toUserEntity(): UserEntity {
     return UserEntity(
+        id = id,
         firstName = firstName,
         lastName = lastName,
         avatarId = avatarId
-    ).apply { id = this@toUserEntity.id }
+    )
 }
 
 // Message Mappers
@@ -35,10 +36,11 @@ fun MessageEntity.toMessageDomain(): Message {
 
 fun Message.toMessageEntity(): MessageEntity {
     return MessageEntity(
+        id = id,
         text = text,
         senderUserId = senderUserId,
         receiverUserId = receiverUserId,
         status = status,
         timestamp = timestamp
-    ).apply { id = this@toMessageEntity.id }
+    )
 }

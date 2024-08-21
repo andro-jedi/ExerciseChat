@@ -405,15 +405,17 @@ private fun MessagesScreenPreview() {
         MessagesScreen(
             navController = rememberNavController(),
             receiverUser = UserEntity(
+                id = 1,
                 firstName = "First",
                 lastName = "Last",
                 avatarId = 2
-            ).apply { id = 1 },
+            ),
             senderUser = UserEntity(
+                id = 2,
                 firstName = "Second",
                 lastName = "Last",
                 avatarId = 3
-            ).apply { id = 2 },
+            ),
             messages = listOf(
                 Message(
                     text = "Hello World!",
@@ -436,15 +438,17 @@ private fun MessagesEmptyChatPreview() {
         MessagesScreen(
             navController = rememberNavController(),
             receiverUser = UserEntity(
+                id = 1,
                 firstName = "First",
                 lastName = "Last",
                 avatarId = 2
-            ).apply { id = 1 },
+            ),
             senderUser = UserEntity(
+                id = 2,
                 firstName = "Second",
                 lastName = "Last",
                 avatarId = 3
-            ).apply { id = 2 },
+            ),
             messages = emptyList(),
             onSendMessage = {},
             onChatCleared = {}

@@ -7,14 +7,11 @@ import java.time.Instant
 
 @Entity(tableName = "message")
 data class MessageEntity(
+    @PrimaryKey(autoGenerate = true)
+    val id: Long = 0,
     val text: String,
     val senderUserId: Long,
     val receiverUserId: Long,
     val status: MessageStatus,
     val timestamp: Instant
-) {
-
-    @PrimaryKey(autoGenerate = true)
-    var id: Long = 0
-}
-
+)

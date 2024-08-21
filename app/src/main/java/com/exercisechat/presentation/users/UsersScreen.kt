@@ -131,7 +131,7 @@ private fun UserItem(
 private fun UsersScreenPreview() {
     MaterialTheme {
         UsersScreen(
-            users = listOf(UserEntity("Lucash", "Bobkin")),
+            users = listOf(UserEntity(0, "Lucash", "Bobkin")),
             currentUserId = 1,
             onUserClicked = {},
             addNewUserClicked = {},
