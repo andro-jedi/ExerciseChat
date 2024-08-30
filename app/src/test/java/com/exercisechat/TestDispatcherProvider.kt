@@ -8,7 +8,7 @@ import kotlinx.coroutines.test.TestDispatcher
  * Test dispatchers provider for unit tests
  */
 class TestDispatchersProvider(
-    val testDispatcher: TestDispatcher = StandardTestDispatcher()
+    private val testDispatcher: TestDispatcher = StandardTestDispatcher()
 ) : DispatchersProvider {
 
     override val default

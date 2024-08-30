@@ -35,7 +35,12 @@ class UsersViewModel(
             userRepository.observeAll().combine(sessionManager.observeCurrentUserId()) { users, currentUserId ->
                 users to currentUserId
             }.collect { (users, currentUserId) ->
-                _uiState.update { it.copy(users = users.map { it.toUserEntity() }, currentUserId = currentUserId) }
+                _uiState.update {
+                    it.copy(
+                        users = users.map { user -> user.toUserEntity() },
+                        currentUserId = currentUserId
+                    )
+                }
             }
         }
     }

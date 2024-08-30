@@ -11,7 +11,7 @@ import org.junit.runner.Description
 /**
  * Base class for test classes
  */
-open class CoroutineTest(val testDispatcher: TestDispatcher = StandardTestDispatcher()) {
+open class CoroutineTest(testDispatcher: TestDispatcher = StandardTestDispatcher()) {
 
     val dispatchers = TestDispatchersProvider(testDispatcher)
 

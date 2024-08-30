@@ -12,7 +12,9 @@ class MessageRepositoryImpl(
 ) : MessageRepository {
 
     override suspend fun observeChat(senderUserId: Long, receiverUserId: Long): Flow<List<Message>> {
-        return messageDao.getAllSorted(senderUserId, receiverUserId).map { it.map { it.toMessageDomain() } }
+        return messageDao.getAllSorted(senderUserId, receiverUserId).map {
+            it.map { messageEntity -> messageEntity.toMessageDomain() }
+        }
     }
 
     override suspend fun add(message: Message): Long {

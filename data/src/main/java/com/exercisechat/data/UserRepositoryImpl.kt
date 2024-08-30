@@ -11,7 +11,7 @@ class UserRepositoryImpl(
 ) : UserRepository {
 
     override suspend fun observeAll(): Flow<List<User>> {
-        return userDao.getAll().map { it.map { it.toUserDomain() } }
+        return userDao.getAll().map { it.map { userEntity -> userEntity.toUserDomain() } }
     }
 
     override suspend fun add(user: User): Long {
