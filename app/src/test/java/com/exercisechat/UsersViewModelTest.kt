@@ -5,6 +5,7 @@ import com.exercisechat.data.toUserEntity
 import com.exercisechat.domain.SessionManager
 import com.exercisechat.domain.UserRepository
 import com.exercisechat.domain.models.User
+import com.exercisechat.presentation.users.UsersUiAction
 import com.exercisechat.presentation.users.UsersUiState
 import com.exercisechat.presentation.users.UsersViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -36,7 +37,7 @@ class UsersViewModelTest : CoroutineTest() {
         wheneverBlocking { userRepository.observeAll() }.thenReturn(flowOf(listOf(newUser)))
 
         val viewModel = provideViewModel()
-        viewModel.generateNewUser()
+        viewModel.onAction(UsersUiAction.GenerateNewUser)
         advanceUntilIdle()
 
         verify(userRepository).add(any())
@@ -53,7 +54,7 @@ class UsersViewModelTest : CoroutineTest() {
 
         val userId = 1L
         val viewModel = provideViewModel()
-        viewModel.changeActiveUser(userId)
+        viewModel.onAction(UsersUiAction.ChangeActiveUser(userId))
         advanceUntilIdle()
 
         verify(sessionManager).setCurrentUser(userId)

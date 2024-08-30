@@ -27,12 +27,11 @@ fun UsersScreen(
     users: List<UserEntity>,
     currentUserId: Long,
     onUserClicked: (user: UserEntity) -> Unit,
-    addNewUserClicked: () -> Unit,
-    changeActiveUserClicked: (user: UserEntity) -> Unit
+    onAction: (action: UsersUiAction) -> Unit
 ) {
     Scaffold(
         topBar = {
-            UsersListTopBar(users, addNewUserClicked, changeActiveUserClicked)
+            UsersListTopBar(users, onAction)
         },
         content = { paddingValues ->
             LazyColumn(
@@ -56,8 +55,7 @@ fun UsersScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 private fun UsersListTopBar(
     users: List<UserEntity>,
-    addNewUserClicked: () -> Unit,
-    changeActiveUserClicked: (user: UserEntity) -> Unit
+    onAction: (action: UsersUiAction) -> Unit,
 ) {
     var showMenu by remember { mutableStateOf(false) }
     Box(
@@ -73,7 +71,9 @@ private fun UsersListTopBar(
                 )
             },
             actions = {
-                IconButton(onClick = addNewUserClicked) {
+                IconButton(onClick = {
+                    onAction(UsersUiAction.GenerateNewUser)
+                }) {
                     Icon(imageVector = Icons.Filled.AddCircle, contentDescription = "Add user")
                 }
                 if (users.size > 1) {
@@ -91,7 +91,7 @@ private fun UsersListTopBar(
                             DropdownMenuItem(
                                 text = { Text(it.fullName) },
                                 onClick = {
-                                    changeActiveUserClicked(it)
+                                   onAction(UsersUiAction.ChangeActiveUser(it.id))
                                     showMenu = false
                                 })
                         }
@@ -146,8 +146,7 @@ private fun UsersScreenPreview() {
             users = listOf(UserEntity(0, "Lucash", "Bobkin")),
             currentUserId = 1,
             onUserClicked = {},
-            addNewUserClicked = {},
-            changeActiveUserClicked = {}
+            onAction = {}
         )
     }
 }

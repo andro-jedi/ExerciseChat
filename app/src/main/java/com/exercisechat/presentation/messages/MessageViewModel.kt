@@ -19,6 +19,11 @@ data class MessageUiState(
     val senderUser: UserEntity? = null
 )
 
+sealed class MessageUiAction {
+    data class SendMessage(val message: String) : MessageUiAction()
+    data object ClearChat : MessageUiAction()
+}
+
 class MessageViewModel(
     private val receiverUserId: Long,
     private val messageRepository: MessageRepository,
@@ -47,7 +52,14 @@ class MessageViewModel(
         }
     }
 
-    fun sendMessage(message: String, timestamp: Instant = Instant.now()) {
+    fun onAction(action: MessageUiAction) {
+        when (action) {
+            is MessageUiAction.SendMessage -> sendMessage(action.message)
+            MessageUiAction.ClearChat -> clearChat()
+        }
+    }
+
+    private fun sendMessage(message: String, timestamp: Instant = Instant.now()) {
         viewModelScope.launch(dispatchersProvider.io) {
             val messageId = messageRepository.add(
                 Message(
@@ -69,7 +81,7 @@ class MessageViewModel(
         }
     }
 
-    fun clearChat() {
+    private fun clearChat() {
         viewModelScope.launch(dispatchersProvider.io) {
             messageRepository.clearChat(currentUser.id, receiverUserId)
         }

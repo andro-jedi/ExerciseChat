@@ -8,6 +8,7 @@ import com.exercisechat.domain.UserRepository
 import com.exercisechat.domain.models.Message
 import com.exercisechat.domain.models.MessageStatus
 import com.exercisechat.domain.models.User
+import com.exercisechat.presentation.messages.MessageUiAction
 import com.exercisechat.presentation.messages.MessageUiState
 import com.exercisechat.presentation.messages.MessageViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -52,7 +53,7 @@ class MessageViewModelTest : CoroutineTest() {
         whenever(userRepository.get(any())).thenReturn(User(2, "Receiver", "User"))
         whenever(messageRepository.add(any())).thenReturn(1)
         val viewModel = provideViewModel()
-        viewModel.sendMessage(messageText)
+        viewModel.onAction(MessageUiAction.SendMessage(messageText))
 
         advanceUntilIdle()
 
@@ -69,7 +70,7 @@ class MessageViewModelTest : CoroutineTest() {
     @Test
     fun `clearChat calls repository to clear chat`() = runTest {
         val viewModel = provideViewModel()
-        viewModel.clearChat()
+        viewModel.onAction(MessageUiAction.ClearChat)
 
         advanceUntilIdle()
 

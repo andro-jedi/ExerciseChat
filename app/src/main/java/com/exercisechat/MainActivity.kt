@@ -47,12 +47,7 @@ class MainActivity : ComponentActivity() {
                             route = "chatScreen/${receiverUser.id}"
                         )
                     },
-                    addNewUserClicked = {
-                        viewModel.generateNewUser()
-                    },
-                    changeActiveUserClicked = { user ->
-                        viewModel.changeActiveUser(user.id)
-                    }
+                    onAction = viewModel::onAction
                 )
             }
 
@@ -69,12 +64,7 @@ class MainActivity : ComponentActivity() {
                     senderUser = uiState.senderUser,
                     receiverUser = uiState.receiverUser,
                     messages = uiState.messages,
-                    onSendMessageClicked = { message ->
-                        viewModel.sendMessage(message)
-                    },
-                    onChatClearClicked = {
-                        viewModel.clearChat()
-                    }
+                    onAction = viewModel::onAction
                 )
             }
         }

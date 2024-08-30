@@ -51,12 +51,11 @@ fun MessagesScreen(
     senderUser: UserEntity?,
     receiverUser: UserEntity?,
     messages: List<Message>,
-    onSendMessageClicked: (message: String) -> Unit,
-    onChatClearClicked: () -> Unit
+    onAction: (action: MessageUiAction) -> Unit
 ) {
     Scaffold(
         topBar = {
-            ChatTopBar(receiverUser, navController, onChatClearClicked)
+            ChatTopBar(receiverUser, navController, onAction)
         }
     ) { innerPadding ->
         Column(
@@ -103,7 +102,9 @@ fun MessagesScreen(
             Box(modifier = Modifier.fillMaxWidth()) {
                 MessageInputField(
                     modifier = Modifier.padding(12.dp),
-                    onSendMessage = onSendMessageClicked
+                    onSendMessage = { message ->
+                        onAction(MessageUiAction.SendMessage(message))
+                    }
                 )
             }
         }
@@ -115,7 +116,7 @@ fun MessagesScreen(
 private fun ChatTopBar(
     receiverUser: UserEntity?,
     navController: NavHostController,
-    onChatClearClicked: () -> Unit
+    onAction: (action: MessageUiAction) -> Unit
 ) {
     var showMenu by remember { mutableStateOf(false) }
     TopAppBar(
@@ -159,7 +160,7 @@ private fun ChatTopBar(
                 DropdownMenuItem(
                     text = { Text("Clear history") },
                     onClick = {
-                        onChatClearClicked()
+                        onAction(MessageUiAction.ClearChat)
                         showMenu = false
                     }
                 )
@@ -437,8 +438,7 @@ private fun MessagesScreenPreview() {
                     Instant.ofEpochSecond(123456789)
                 )
             ),
-            onSendMessageClicked = {},
-            onChatClearClicked = {}
+            onAction = {}
         )
     }
 }
@@ -462,8 +462,7 @@ private fun MessagesEmptyChatPreview() {
                 avatarId = 3
             ),
             messages = emptyList(),
-            onSendMessageClicked = {},
-            onChatClearClicked = {}
+            onAction = {}
         )
     }
 }
@@ -485,8 +484,7 @@ private fun MessagesLoadingChatPreview() {
                     Instant.ofEpochSecond(123456789)
                 )
             ),
-            onSendMessageClicked = {},
-            onChatClearClicked = {}
+            onAction = {}
         )
     }
 }

@@ -16,6 +16,11 @@ data class UsersUiState(
     val currentUserId: Long = 0
 )
 
+sealed class UsersUiAction {
+    data object GenerateNewUser : UsersUiAction()
+    data class ChangeActiveUser(val userId: Long) : UsersUiAction()
+}
+
 class UsersViewModel(
     private val userRepository: UserRepository,
     private val sessionManager: SessionManager,
@@ -35,10 +40,17 @@ class UsersViewModel(
         }
     }
 
+    fun onAction(action: UsersUiAction) {
+        when (action) {
+            is UsersUiAction.GenerateNewUser -> generateNewUser()
+            is UsersUiAction.ChangeActiveUser -> changeActiveUser(action.userId)
+        }
+    }
+
     /**
      * Generate random new user and add it to the database
      */
-    fun generateNewUser() {
+    private fun generateNewUser() {
         viewModelScope.launch(dispatchersProvider.io) {
             val id = userRepository.add(UserMock.newUser())
             // if current session is empty init it with first added user for demo purposes
@@ -49,7 +61,7 @@ class UsersViewModel(
         }
     }
 
-    fun changeActiveUser(userId: Long) {
+    private fun changeActiveUser(userId: Long) {
         viewModelScope.launch(dispatchersProvider.io) {
             sessionManager.setCurrentUser(userId)
 
