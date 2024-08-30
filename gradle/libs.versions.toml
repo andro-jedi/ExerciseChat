@@ -1,24 +1,24 @@
 [versions]
-agp = "8.5.1"
-kotlin = "1.9.0"
+agp = "8.5.2"
+kotlin = "2.0.10"
 coreKtx = "1.13.1"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
-lifecycleRuntimeKtx = "2.6.1"
+lifecycleRuntimeKtx = "2.8.4"
 activityCompose = "1.9.1"
-composeBom = "2024.04.01"
+composeBom = "2024.08.00"
 room = "2.6.1"
-ksp = "1.9.21-1.0.15"
+ksp = "2.0.10-1.0.24"
 koin = "4.0.0-RC1"
 navigation = "2.7.7"
-jetbrainsKotlinJvm = "1.9.0"
+jetbrainsKotlinJvm = "1.9.10"
 appcompat = "1.7.0"
 material = "1.12.0"
 coroutineTest = "1.8.0"
 androidx-coreTesting = "2.2.0"
 androidx-test-core = "1.6.1"
-mockito = "5.2.1"
+mockito = "5.7.0"
 turbine = "1.1.0"
 
 [libraries]
@@ -58,4 +58,5 @@ jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = 
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
 android-library = { id = "com.android.library", version.ref = "agp" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 

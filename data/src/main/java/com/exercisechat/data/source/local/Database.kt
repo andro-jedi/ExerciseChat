@@ -7,7 +7,7 @@ import com.exercisechat.data.MessageEntity
 import com.exercisechat.data.UserEntity
 
 @TypeConverters(MessageConverters::class)
-@Database(entities = [UserEntity::class, MessageEntity::class], version = 1)
+@Database(entities = [UserEntity::class, MessageEntity::class], version = 1, exportSchema = false)
 abstract class ChatDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
     abstract fun messageDao(): MessageDao
