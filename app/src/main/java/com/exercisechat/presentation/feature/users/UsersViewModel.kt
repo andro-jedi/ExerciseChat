@@ -54,7 +54,7 @@ class UsersViewModel(
             // if current session is empty init it with first added user for demo purposes
             // it will be possible to change session user id later on users screen
             if (sessionManager.getCurrentUser() == null) {
-               changeActiveUser(id)
+                changeActiveUser(id)
             }
         }
     }

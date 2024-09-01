@@ -16,6 +16,7 @@ fun UsersScreenDestination(navController: NavHostController) {
     UsersScreen(
         users = uiState.users,
         currentUserId = uiState.currentUserId,
+        effectFlow = viewModel.uiEffect,
         onUserClicked = { receiverUser ->
             navController.navigate(
                 route = "chatScreen/${receiverUser.id}"
