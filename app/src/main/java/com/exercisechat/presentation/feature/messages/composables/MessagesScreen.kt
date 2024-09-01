@@ -3,7 +3,7 @@ package com.exercisechat.presentation.feature.messages.composables
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -28,7 +28,6 @@ import com.exercisechat.domain.models.MessageStatus
 import com.exercisechat.presentation.feature.messages.MessagesContract
 import com.exercisechat.presentation.theme.Colors
 import com.exercisechat.presentation.theme.ExerciseChatTheme
-import java.time.Duration
 import java.time.Instant
 
 private const val SMALL_MESSAGE_SPACING = 4
@@ -126,17 +125,11 @@ private fun MessagesColumn(
     messages: List<Message>,
     senderUser: UserEntity
 ) {
-
-
     LazyColumn(
         modifier = modifier,
         reverseLayout = true
     ) {
-        itemsIndexed(messages) { index, message ->
-            // access the previous item if it exists
-            // since array is sorted by descending we are using next index, not previous
-            val previousMessage = messages.getOrNull(index + 1)
-
+        items(messages) { message ->
             val isCurrentUser = message.senderUserId == senderUser.id
             // prevent the bubble to take all width of the screen to make UI more readable
             val bubblePadding = if (isCurrentUser) {
@@ -146,10 +139,10 @@ private fun MessagesColumn(
             }
 
             val messageSpacing = if (message.messageSpacing == MessageSpacing.LARGE) {
-                LARGE_MESSAGE_SPACING.dp
+                LARGE_MESSAGE_SPACING
             } else {
-                SMALL_MESSAGE_SPACING.dp
-            }
+                SMALL_MESSAGE_SPACING
+            }.dp
             MessagesBubble(
                 modifier = Modifier
                     .padding(top = messageSpacing)
@@ -160,13 +153,8 @@ private fun MessagesColumn(
             )
 
             // display timestamp if a previous message was sent more than an hour ago, or there is no previous messages
-            if (previousMessage == null) {
+            if (message.needsHeader) {
                 MessagesHeader(message.timestamp)
-            } else {
-                val messageAge = Duration.between(previousMessage.timestamp, message.timestamp)
-                if (messageAge.toHours() > 1) {
-                    MessagesHeader(message.timestamp)
-                }
             }
         }
     }

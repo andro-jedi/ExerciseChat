@@ -9,7 +9,8 @@ data class Message(
     val status: MessageStatus,
     val timestamp: Instant,
     val id: Long = 0,
-    val messageSpacing: MessageSpacing = MessageSpacing.DEFAULT
+    val messageSpacing: MessageSpacing = MessageSpacing.DEFAULT,
+    val needsHeader: Boolean = false
 )
 
 enum class MessageStatus {

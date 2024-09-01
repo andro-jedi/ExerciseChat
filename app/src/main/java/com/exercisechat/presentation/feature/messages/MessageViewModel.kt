@@ -11,7 +11,6 @@ import com.exercisechat.domain.models.MessageStatus
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import org.koin.core.time.measureDurationForResult
 import java.time.Duration
 import java.time.Instant
 import kotlin.time.Duration.Companion.seconds
@@ -42,13 +41,18 @@ class MessageViewModel(
 
             messageRepository.observeChat(currentUser.id, receiverUserId).collect { messages ->
                 var previousMessage: Message? = null
-                val uiMessages = measureDurationForResult {
-                    messages.map { message ->
-                        message.copy(messageSpacing = getMessageSpacing(previousMessage, message))
-                            .also { previousMessage = message }
-                    }.reversed()
-                }
-                _uiState.update { it.copy(messages = uiMessages.first) }
+                val uiMessages = messages.map { message ->
+                    val needsHeader = previousMessage == null
+                        || messageTimeDifference(previousMessage!!, message).toHours() > 1
+
+                    message.copy(
+                        messageSpacing = getMessageSpacing(previousMessage, message),
+                        needsHeader = needsHeader
+                    )
+                        .also { previousMessage = message }
+                }.reversed()
+
+                _uiState.update { it.copy(messages = uiMessages) }
             }
         }
     }
@@ -58,6 +62,10 @@ class MessageViewModel(
             is MessagesContract.Event.SendMessage -> sendMessage(action.message)
             MessagesContract.Event.ClearChat -> clearChat()
         }
+    }
+
+    private fun messageTimeDifference(previousMessage: Message, message: Message): Duration {
+        return Duration.between(previousMessage.timestamp, message.timestamp)
     }
 
     /**
