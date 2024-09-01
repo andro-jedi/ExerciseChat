@@ -19,7 +19,7 @@ fun UsersScreenDestination(navController: NavHostController) {
         effectFlow = viewModel.uiEffect,
         onUserClicked = { receiverUser ->
             navController.navigate(
-                route = "chatScreen/${receiverUser.id}"
+               Navigation.Messages(receiverUser.id)
             )
         },
         onEvent = viewModel::handleEvent

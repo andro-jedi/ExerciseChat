@@ -5,14 +5,14 @@ coreKtx = "1.13.1"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
-kotlinxCoroutinesCoreJvm = "1.6.4"
+kotlinxCoroutinesCoreJvm = "1.8.0"
 lifecycleRuntimeKtx = "2.8.4"
 activityCompose = "1.9.1"
 composeBom = "2024.08.00"
 room = "2.6.1"
 ksp = "2.0.10-1.0.24"
 koin = "4.0.0-RC1"
-navigation = "2.7.7"
+navigation = "2.8.0-rc01"
 jetbrainsKotlinJvm = "1.9.10"
 appcompat = "1.7.0"
 material = "1.12.0"
@@ -21,6 +21,7 @@ androidx-coreTesting = "2.2.0"
 androidx-test-core = "1.6.1"
 mockito = "5.4.0"
 turbine = "1.1.0"
+kotlinxSerialization = "1.7.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -53,6 +54,7 @@ tests-core = { module = "androidx.test:core", version.ref = "androidx-test-core"
 tests-mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
 tests-mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockito" }
 tests-turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
+kotlinxSerializationJson = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -61,4 +63,5 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlinxSerialization" }
 
