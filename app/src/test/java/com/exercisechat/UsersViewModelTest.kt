@@ -5,9 +5,8 @@ import com.exercisechat.data.toUserEntity
 import com.exercisechat.domain.SessionManager
 import com.exercisechat.domain.UserRepository
 import com.exercisechat.domain.models.User
+import com.exercisechat.presentation.feature.users.UsersContract
 import com.exercisechat.presentation.feature.users.UsersViewModel
-import com.exercisechat.presentation.users.UsersUiEvent
-import com.exercisechat.presentation.users.UsersUiState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -37,7 +36,7 @@ class UsersViewModelTest : CoroutineTest() {
         wheneverBlocking { userRepository.observeAll() }.thenReturn(flowOf(listOf(newUser)))
 
         val viewModel = provideViewModel()
-        viewModel.handleEvent(UsersUiEvent.GenerateNewUser)
+        viewModel.handleEvent(UsersContract.Event.GenerateNewUser)
         advanceUntilIdle()
 
         verify(userRepository).add(any())
@@ -54,7 +53,7 @@ class UsersViewModelTest : CoroutineTest() {
 
         val userId = 1L
         val viewModel = provideViewModel()
-        viewModel.handleEvent(UsersUiEvent.ChangeActiveUser(userId))
+        viewModel.handleEvent(UsersContract.Event.ChangeActiveUser(userId))
         advanceUntilIdle()
 
         verify(sessionManager).setCurrentUser(userId)
@@ -78,7 +77,7 @@ class UsersViewModelTest : CoroutineTest() {
 
         viewModel.uiState.test {
             assertEquals(
-                UsersUiState(users.map { it.toUserEntity() }, currentUserId),
+                UsersContract.State(users.map { it.toUserEntity() }, currentUserId),
                 awaitItem()
             )
             cancelAndIgnoreRemainingEvents()

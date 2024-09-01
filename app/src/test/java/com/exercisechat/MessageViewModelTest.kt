@@ -8,9 +8,8 @@ import com.exercisechat.domain.UserRepository
 import com.exercisechat.domain.models.Message
 import com.exercisechat.domain.models.MessageStatus
 import com.exercisechat.domain.models.User
-import com.exercisechat.presentation.feature.messages.MessageUiAction
-import com.exercisechat.presentation.feature.messages.MessageUiState
 import com.exercisechat.presentation.feature.messages.MessageViewModel
+import com.exercisechat.presentation.feature.messages.MessagesContract
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -53,7 +52,7 @@ class MessageViewModelTest : CoroutineTest() {
         whenever(userRepository.get(any())).thenReturn(User(2, "Receiver", "User"))
         whenever(messageRepository.add(any())).thenReturn(1)
         val viewModel = provideViewModel()
-        viewModel.onAction(MessageUiAction.SendMessage(messageText))
+        viewModel.handleEvent(MessagesContract.Event.SendMessage(messageText))
 
         advanceUntilIdle()
 
@@ -70,7 +69,7 @@ class MessageViewModelTest : CoroutineTest() {
     @Test
     fun `clearChat calls repository to clear chat`() = runTest {
         val viewModel = provideViewModel()
-        viewModel.onAction(MessageUiAction.ClearChat)
+        viewModel.handleEvent(MessagesContract.Event.ClearChat)
 
         advanceUntilIdle()
 
@@ -93,7 +92,7 @@ class MessageViewModelTest : CoroutineTest() {
         advanceUntilIdle()
 
         assertEquals(
-            MessageUiState(messages, receiverUser, currentUser),
+            MessagesContract.State(messages, receiverUser, currentUser),
             viewModel.uiState.value
         )
     }
