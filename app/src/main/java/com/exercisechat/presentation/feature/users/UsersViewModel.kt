@@ -61,9 +61,11 @@ class UsersViewModel(
 
     private fun changeActiveUser(userId: Long) {
         viewModelScope.launch(dispatchersProvider.io) {
-            sessionManager.setCurrentUser(userId)
-            _uiState.update { it.copy(currentUserId = userId) }
-            _uiEffect.send(UsersContract.Effect.UserSwitched)
+            if (sessionManager.getCurrentUser()?.id != userId) {
+                sessionManager.setCurrentUser(userId)
+                _uiState.update { it.copy(currentUserId = userId) }
+                _uiEffect.send(UsersContract.Effect.UserSwitched)
+            }
         }
     }
 }
