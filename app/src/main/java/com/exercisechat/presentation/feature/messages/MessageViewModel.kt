@@ -6,12 +6,17 @@ import com.exercisechat.data.UserEntity
 import com.exercisechat.data.toUserEntity
 import com.exercisechat.domain.*
 import com.exercisechat.domain.models.Message
+import com.exercisechat.domain.models.MessageSpacing
 import com.exercisechat.domain.models.MessageStatus
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import org.koin.core.time.measureDurationForResult
+import java.time.Duration
 import java.time.Instant
 import kotlin.time.Duration.Companion.seconds
+
+private val applyLargeSpacingAfter = Duration.ofSeconds(20)
 
 class MessageViewModel(
     private val receiverUserId: Long,
@@ -36,7 +41,14 @@ class MessageViewModel(
             }
 
             messageRepository.observeChat(currentUser.id, receiverUserId).collect { messages ->
-                _uiState.update { it.copy(messages = messages) }
+                var previousMessage: Message? = null
+                val uiMessages = measureDurationForResult {
+                    messages.map { message ->
+                        message.copy(messageSpacing = getMessageSpacing(previousMessage, message))
+                            .also { previousMessage = message }
+                    }.reversed()
+                }
+                _uiState.update { it.copy(messages = uiMessages.first) }
             }
         }
     }
@@ -45,6 +57,28 @@ class MessageViewModel(
         when (action) {
             is MessagesContract.Event.SendMessage -> sendMessage(action.message)
             MessagesContract.Event.ClearChat -> clearChat()
+        }
+    }
+
+    /**
+     * Returns the spacing between the current message and the previous message.
+     *
+     * @param previousMessage the previous message, or null if this is the first message
+     * @param currentMessage the current message
+     * @return large or small spacing
+     */
+    private fun getMessageSpacing(previousMessage: Message?, currentMessage: Message): MessageSpacing {
+        if (previousMessage == null) return MessageSpacing.DEFAULT
+
+        return if (previousMessage.senderUserId == currentMessage.senderUserId
+            && Duration.between(
+                previousMessage.timestamp,
+                currentMessage.timestamp
+            ).seconds < applyLargeSpacingAfter.seconds
+        ) {
+            MessageSpacing.DEFAULT
+        } else {
+            MessageSpacing.LARGE
         }
     }
 

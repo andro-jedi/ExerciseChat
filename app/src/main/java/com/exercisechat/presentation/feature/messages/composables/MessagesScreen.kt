@@ -16,7 +16,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.DefaultShadowColor
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -24,6 +23,7 @@ import androidx.navigation.compose.rememberNavController
 import com.exercisechat.R
 import com.exercisechat.data.UserEntity
 import com.exercisechat.domain.models.Message
+import com.exercisechat.domain.models.MessageSpacing
 import com.exercisechat.domain.models.MessageStatus
 import com.exercisechat.presentation.feature.messages.MessagesContract
 import com.exercisechat.presentation.theme.Colors
@@ -33,8 +33,6 @@ import java.time.Instant
 
 private const val SMALL_MESSAGE_SPACING = 4
 private const val LARGE_MESSAGE_SPACING = 12
-
-private val applyLargeSpacingAfter = Duration.ofSeconds(20)
 
 @Composable
 fun MessagesScreen(
@@ -128,27 +126,7 @@ private fun MessagesColumn(
     messages: List<Message>,
     senderUser: UserEntity
 ) {
-    /**
-     * Returns the spacing between the current message and the previous message.
-     *
-     * @param previousMessage the previous message, or null if this is the first message
-     * @param currentMessage the current message
-     * @return large or small spacing
-     */
-    fun getMessageSpacing(previousMessage: Message?, currentMessage: Message): Dp {
-        if (previousMessage == null) return SMALL_MESSAGE_SPACING.dp
 
-        return if (previousMessage.senderUserId == currentMessage.senderUserId
-            && Duration.between(
-                previousMessage.timestamp,
-                currentMessage.timestamp
-            ).seconds < applyLargeSpacingAfter.seconds
-        ) {
-            SMALL_MESSAGE_SPACING.dp
-        } else {
-            LARGE_MESSAGE_SPACING.dp
-        }
-    }
 
     LazyColumn(
         modifier = modifier,
@@ -159,14 +137,18 @@ private fun MessagesColumn(
             // since array is sorted by descending we are using next index, not previous
             val previousMessage = messages.getOrNull(index + 1)
 
-            val messageSpacing = getMessageSpacing(previousMessage, message)
-
             val isCurrentUser = message.senderUserId == senderUser.id
             // prevent the bubble to take all width of the screen to make UI more readable
             val bubblePadding = if (isCurrentUser) {
                 Modifier.padding(start = 48.dp)
             } else {
                 Modifier.padding(end = 48.dp)
+            }
+
+            val messageSpacing = if (message.messageSpacing == MessageSpacing.LARGE) {
+                LARGE_MESSAGE_SPACING.dp
+            } else {
+                SMALL_MESSAGE_SPACING.dp
             }
             MessagesBubble(
                 modifier = Modifier

@@ -8,11 +8,17 @@ data class Message(
     val receiverUserId: Long,
     val status: MessageStatus,
     val timestamp: Instant,
-    val id: Long = 0
+    val id: Long = 0,
+    val messageSpacing: MessageSpacing = MessageSpacing.DEFAULT
 )
 
 enum class MessageStatus {
     SENT,
     DELIVERED
+}
+
+enum class MessageSpacing {
+    DEFAULT,
+    LARGE
 }
 

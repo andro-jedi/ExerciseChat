@@ -13,7 +13,7 @@ interface MessageDao {
         SELECT * FROM message 
         WHERE (senderUserId == :senderUserId AND receiverUserId == :receiverUserId) 
         OR (senderUserId == :receiverUserId AND receiverUserId == :senderUserId) 
-        ORDER BY id DESC
+        ORDER BY id ASC
         """
     )
     fun getAllSorted(senderUserId: Long, receiverUserId: Long): Flow<List<MessageEntity>>
