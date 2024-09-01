@@ -2,6 +2,7 @@
 
 ## Overview
 This Android application implements a basic chat interface using **Clean Architecture** principles to promote code maintainability, testability, and reusability.
+This was a test project for job interview. Time to complete approx 10 hours.
 
 At first, add users by pressing the + icon at the top right (the first added user will be the active session user).
 If you have two or more users, you can switch between them by pressing the drop-down menu on the users screen and selecting a new user.
@@ -40,9 +41,5 @@ Messages will have a small message separation spacing if the following are both 
 ## Additional Considerations
 - **Testing**: Unit tests are included to ensure code quality and reliability.
 - **Best Practices**: Adherence to Android development best practices, including code style, performance optimization, and accessibility guidelines.
-
-## Future Improvements
-- **UI Enhancements**: Additional features like message reactions, attachments.
-- **Add Result<T>**: To properly handle results which potentially may failure or produce errors
 
 By following Clean Architecture principles and leveraging modern Android development tools, this project provides a solid foundation for building more complex chat applications.
