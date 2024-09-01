@@ -1,4 +1,4 @@
-package com.exercisechat.presentation.messages
+package com.exercisechat.presentation.feature.messages
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,17 +13,6 @@ import kotlinx.coroutines.launch
 import java.time.Instant
 import kotlin.time.Duration.Companion.seconds
 
-data class MessageUiState(
-    val messages: List<Message>,
-    val receiverUser: UserEntity? = null,
-    val senderUser: UserEntity? = null
-)
-
-sealed class MessageUiAction {
-    data class SendMessage(val message: String) : MessageUiAction()
-    data object ClearChat : MessageUiAction()
-}
-
 class MessageViewModel(
     private val receiverUserId: Long,
     private val messageRepository: MessageRepository,
@@ -32,8 +21,8 @@ class MessageViewModel(
     private val dispatchersProvider: DispatchersProvider
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(MessageUiState(emptyList()))
-    val uiState: StateFlow<MessageUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(MessagesContract.State(emptyList()))
+    val uiState: StateFlow<MessagesContract.State> = _uiState.asStateFlow()
 
     private lateinit var currentUser: UserEntity
 
@@ -52,10 +41,10 @@ class MessageViewModel(
         }
     }
 
-    fun onAction(action: MessageUiAction) {
+    fun handleEvent(action: MessagesContract.Event) {
         when (action) {
-            is MessageUiAction.SendMessage -> sendMessage(action.message)
-            MessageUiAction.ClearChat -> clearChat()
+            is MessagesContract.Event.SendMessage -> sendMessage(action.message)
+            MessagesContract.Event.ClearChat -> clearChat()
         }
     }
 

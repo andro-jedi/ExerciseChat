@@ -1,25 +1,15 @@
-package com.exercisechat.presentation.users
+package com.exercisechat.presentation.feature.users
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.exercisechat.data.UserEntity
 import com.exercisechat.data.UserMock
 import com.exercisechat.data.toUserEntity
 import com.exercisechat.domain.DispatchersProvider
 import com.exercisechat.domain.SessionManager
 import com.exercisechat.domain.UserRepository
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-
-data class UsersUiState(
-    val users: List<UserEntity>,
-    val currentUserId: Long = 0
-)
-
-sealed class UsersUiAction {
-    data object GenerateNewUser : UsersUiAction()
-    data class ChangeActiveUser(val userId: Long) : UsersUiAction()
-}
 
 class UsersViewModel(
     private val userRepository: UserRepository,
@@ -27,8 +17,11 @@ class UsersViewModel(
     private val dispatchersProvider: DispatchersProvider
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(UsersUiState(emptyList()))
-    val uiState: StateFlow<UsersUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(UsersContract.State(emptyList()))
+    val uiState: StateFlow<UsersContract.State> = _uiState.asStateFlow()
+
+    private val _uiEffect = Channel<UsersContract.Effect>(Channel.BUFFERED)
+    val uiEffect: Flow<UsersContract.Effect> = _uiEffect.receiveAsFlow()
 
     init {
         viewModelScope.launch(dispatchersProvider.io) {
@@ -45,10 +38,10 @@ class UsersViewModel(
         }
     }
 
-    fun onAction(action: UsersUiAction) {
+    fun handleEvent(action: UsersContract.Event) {
         when (action) {
-            is UsersUiAction.GenerateNewUser -> generateNewUser()
-            is UsersUiAction.ChangeActiveUser -> changeActiveUser(action.userId)
+            is UsersContract.Event.GenerateNewUser -> generateNewUser()
+            is UsersContract.Event.ChangeActiveUser -> changeActiveUser(action.userId)
         }
     }
 
@@ -69,8 +62,8 @@ class UsersViewModel(
     private fun changeActiveUser(userId: Long) {
         viewModelScope.launch(dispatchersProvider.io) {
             sessionManager.setCurrentUser(userId)
-
             _uiState.update { it.copy(currentUserId = userId) }
+            _uiEffect.send(UsersContract.Effect.UserSwitched)
         }
     }
 }

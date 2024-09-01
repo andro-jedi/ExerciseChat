@@ -8,9 +8,9 @@ import com.exercisechat.domain.UserRepository
 import com.exercisechat.domain.models.Message
 import com.exercisechat.domain.models.MessageStatus
 import com.exercisechat.domain.models.User
-import com.exercisechat.presentation.messages.MessageUiAction
-import com.exercisechat.presentation.messages.MessageUiState
-import com.exercisechat.presentation.messages.MessageViewModel
+import com.exercisechat.presentation.feature.messages.MessageUiAction
+import com.exercisechat.presentation.feature.messages.MessageUiState
+import com.exercisechat.presentation.feature.messages.MessageViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle

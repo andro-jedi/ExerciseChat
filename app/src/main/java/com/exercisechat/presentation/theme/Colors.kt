@@ -1,4 +1,4 @@
-package com.exercisechat.ui.theme
+package com.exercisechat.presentation.theme
 
 import androidx.compose.ui.graphics.Color
 
