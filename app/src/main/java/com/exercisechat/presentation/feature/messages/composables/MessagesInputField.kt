@@ -19,10 +19,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.exercisechat.R
 import com.exercisechat.presentation.theme.Colors
+import com.exercisechat.presentation.theme.ExerciseChatTheme
 
 @Composable
 fun MessagesInputField(
@@ -89,6 +91,16 @@ fun MessagesInputField(
                     tint = Color.White
                 )
             }
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun MessagesInputPreview() {
+    ExerciseChatTheme {
+        MessagesInputField {
+
         }
     }
 }

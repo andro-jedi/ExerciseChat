@@ -268,14 +268,4 @@ private fun MessagesLoadingChatPreview() {
     }
 }
 
-@Preview
-@Composable
-private fun MessagesInputPreview() {
-    ExerciseChatTheme {
-        MessagesInputField {
-
-        }
-    }
-}
-
 
