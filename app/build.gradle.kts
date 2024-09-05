@@ -62,8 +62,7 @@ dependencies {
     testImplementation(libs.tests.core)
     testImplementation(libs.tests.arch.core)
     testImplementation(libs.junit)
-    testImplementation(libs.tests.mockito.core)
-    testImplementation(libs.tests.mockito.kotlin)
+    testImplementation(libs.tests.mockk)
     testImplementation(libs.tests.turbine)
 
     implementation(libs.kotlinx.coroutine.test)

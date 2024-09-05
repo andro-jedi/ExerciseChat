@@ -19,9 +19,9 @@ material = "1.12.0"
 coroutineTest = "1.8.0"
 androidx-coreTesting = "2.2.0"
 androidx-test-core = "1.6.1"
-mockito = "5.4.0"
 turbine = "1.1.0"
 kotlinxSerialization = "1.7.1"
+mockkVersion = "1.13.12"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -51,8 +51,7 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 tests-arch-core = { module = "androidx.arch.core:core-testing", version.ref = "androidx-coreTesting" }
 tests-core = { module = "androidx.test:core", version.ref = "androidx-test-core" }
-tests-mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
-tests-mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockito" }
+tests-mockk = { module = "io.mockk:mockk", version.ref = "mockkVersion" }
 tests-turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 kotlinxSerializationJson = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 
